@@ -1,4 +1,4 @@
-module github.com/Daichi0914/project_template
+module github.com/Daichi0914/task_estimate_app
 
 go 1.22.1
 

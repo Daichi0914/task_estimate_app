@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/Daichi0914/project_template/handler"
+	"github.com/Daichi0914/task_estimate_app/handler"
 	"net/http"
 )
 

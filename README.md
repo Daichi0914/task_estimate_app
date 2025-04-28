@@ -1,6 +1,6 @@
 ## Project Structure
 ```
-project_template/
+task_estimate_app/
 ├── backend/                 # Go製のバックエンド（クリーンアーキテクチャ）
 │   ├── cmd/                 # エントリーポイント（main.goのみ、他処理はinternalに分離）
 │   │   └── api/             # API起動用のmainパッケージ

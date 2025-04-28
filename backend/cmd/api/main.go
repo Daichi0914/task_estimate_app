@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Daichi0914/project_template/internal/bootstrap"
-	"github.com/Daichi0914/project_template/internal/router"
+	"github.com/Daichi0914/task_estimate_app/internal/bootstrap"
+	"github.com/Daichi0914/task_estimate_app/internal/router"
 )
 
 func main() {
