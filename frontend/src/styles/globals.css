@@ -3,3 +3,21 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+/* ドラッグ中のアイテムのスタイル */
+.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background: white;
+  border: 2px solid #3b82f6;
+}
+
+/* ドラッグ中のアイテムのプレビュー */
+.drag-preview {
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 2px solid #3b82f6;
+}
