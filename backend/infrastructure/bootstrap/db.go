@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"project_template/backend/infrastructure/config"
+	"task_estimate_app/backend/infrastructure/config"
 )
 
 const (

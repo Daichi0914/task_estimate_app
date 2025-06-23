@@ -6,10 +6,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"project_template/backend/domain/entity"
-	"project_template/backend/domain/repository"
-	"project_template/backend/domain/services"
-	"project_template/backend/usecase/dto"
+	"task_estimate_app/backend/domain/entity"
+	"task_estimate_app/backend/domain/repository"
+	"task_estimate_app/backend/domain/services"
+	"task_estimate_app/backend/usecase/dto"
 )
 
 var (

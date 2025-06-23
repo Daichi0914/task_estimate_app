@@ -7,10 +7,10 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"project_template/backend/adapter/middleware"
-	"project_template/backend/domain/services"
-	"project_template/backend/usecase/dto"
-	"project_template/backend/usecase/interactor"
+	"task_estimate_app/backend/adapter/middleware"
+	"task_estimate_app/backend/domain/services"
+	"task_estimate_app/backend/usecase/dto"
+	"task_estimate_app/backend/usecase/interactor"
 )
 
 // UserInteractorInterface はユーザーインタラクターのインターフェースを定義します

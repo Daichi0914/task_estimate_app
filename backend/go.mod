@@ -1,4 +1,4 @@
-module project_template/backend
+module task_estimate_app/backend
 
 go 1.22.1
 

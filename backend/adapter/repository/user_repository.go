@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"project_template/backend/domain/entity"
-	domainRepo "project_template/backend/domain/repository"
+	"task_estimate_app/backend/domain/entity"
+	domainRepo "task_estimate_app/backend/domain/repository"
 )
 
 var (

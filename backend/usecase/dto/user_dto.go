@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"project_template/backend/domain/entity"
+	"task_estimate_app/backend/domain/entity"
 )
 
 // UserInput は新規ユーザー作成のための入力データです

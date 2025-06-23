@@ -5,8 +5,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"project_template/backend/adapter/handler"
-	"project_template/backend/adapter/middleware"
+	"task_estimate_app/backend/adapter/handler"
+	"task_estimate_app/backend/adapter/middleware"
 )
 
 // Router はアプリケーションのルーターを設定します

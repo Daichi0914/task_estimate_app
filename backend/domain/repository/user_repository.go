@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"project_template/backend/domain/entity"
+	"task_estimate_app/backend/domain/entity"
 )
 
 // UserRepository はユーザーのリポジトリインターフェースです

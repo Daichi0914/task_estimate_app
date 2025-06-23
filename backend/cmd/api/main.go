@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 
-	"project_template/backend/adapter/handler"
-	"project_template/backend/adapter/repository"
-	"project_template/backend/adapter/router"
-	"project_template/backend/domain/services"
-	"project_template/backend/infrastructure/bootstrap"
-	"project_template/backend/infrastructure/config"
-	"project_template/backend/usecase/interactor"
+	"task_estimate_app/backend/adapter/handler"
+	"task_estimate_app/backend/adapter/repository"
+	"task_estimate_app/backend/adapter/router"
+	"task_estimate_app/backend/domain/services"
+	"task_estimate_app/backend/infrastructure/bootstrap"
+	"task_estimate_app/backend/infrastructure/config"
+	"task_estimate_app/backend/usecase/interactor"
 )
 
 func main() {
