@@ -1,0 +1,76 @@
+services:
+  frontend_dev:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env.dev
+
+  frontend_test:
+    build: ./frontend
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env.test
+
+  backend_dev:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+      - /app/tmp
+    env_file:
+      - .env.dev
+    working_dir: /app
+    command: ["air"]
+
+  backend_test:
+    build: ./backend
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./backend:/app
+      - /app/tmp
+    env_file:
+      - .env.test
+    working_dir: /app
+    command: ["air"]
+
+  db_dev:
+    image: mysql:8
+    restart: always
+    env_file:
+      - .env.dev
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/infrastructure/db/migration:/docker-entrypoint-initdb.d
+      - ./my.cnf:/etc/mysql/my.cnf
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  db_test:
+    image: mysql:8
+    restart: always
+    env_file:
+      - .env.test
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+      - ./backend/infrastructure/db/migration:/docker-entrypoint-initdb.d
+      - ./my.cnf:/etc/mysql/my.cnf
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  mysql_data:
+  mysql_test_data:
+  frontend_node_modules:
+  backend_tmp:
