@@ -33,32 +33,4 @@ task_estimate_app/
 │   ├── go.mod               # Goモジュールの設定ファイル（依存関係の管理など）
 │   └── tmp/                 # 一時ファイル置き場（airによるビルド結果など）
 ├── frontend/                # Next.js製のフロントエンド（クリーンアーキテクチャ）
-│   ├── __tests__/           # テストコードファイル群
-│   ├── public/              # 画像などの静的アセット
-│   └── src/
-│       ├── app/             # App Router ディレクトリ（Next.jsのルーティング設定）
-│       ├── domain/          # ドメイン層：ビジネスエンティティとロジック
-│       │   ├── entity/      # ビジネスエンティティの定義
-│       │   └── repository/  # リポジトリのインターフェース定義
-│       ├── application/     # アプリケーション層：ユースケースとビジネスロジック
-│       │   ├── usecase/     # ユースケースの定義
-│       │   └── dto/         # データ転送オブジェクト
-│       ├── adapter/         # アダプター層：外部とのインターフェース
-│       │   ├── components/  # 再利用可能なReactコンポーネント群
-│       │   ├── hooks/       # カスタムReactフック
-│       │   ├── pages/       # ページコンポーネント（App Router使用時は省略可）
-│       │   └── state/       # 状態管理（Recoilなど）
-│       │       ├── atoms/   # 状態（Atom）の定義
-│       │       ├── selectors/# 派生状態（Selector）の定義
-│       │       └── effects/ # Atomに副作用を与えるEffectの定義
-│       ├── infrastructure/  # インフラストラクチャ層：外部サービスとの連携
-│       │   ├── api/         # APIクライアント
-│       │   └── storage/     # ローカルストレージなどの永続化
-│       ├── styles/          # CSSやスタイル関連ファイル
-│       ├── types/           # 型定義ファイル（TypeScript用）
-│       └── utils/           # 共通ユーティリティ関数群
-├── .env                     # 環境変数設定ファイル
-├── .gitignore               # Gitの追跡対象から除外するファイル設定
-├── docker-compose.yml       # Dockerサービスの設定ファイル
-└── Makefile                 # makeコマンドによるタスク定義ファイル
 ```
