@@ -19,5 +19,6 @@ export interface UpdateWorkspaceRequest {
 
 export interface ReorderWorkspaceRequest {
   workspaceId: string;
-  newOrder: number;
+  fromIndex: number;
+  toIndex: number;
 }

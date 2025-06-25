@@ -1,5 +1,5 @@
-import { CreateUserForm } from "@/components/user/create-user-form"
-import { UserList } from "@/components/user/user-list"
+import { CreateUserForm } from "@/components/user/createUserForm"
+import { UserList } from "@/components/user/userList"
 import { Layout } from "@/components/layout/layout"
 
 export default function UsersPage() {

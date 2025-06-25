@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useWorkspaceSidebar } from '../../hooks/useWorkspace';
 import { FolderIcon, UserIcon } from '../ui/icons';
+import { useSidebar } from '../../hooks/useSidebar';
 
 export const Header: React.FC = () => {
-  const { toggle } = useWorkspaceSidebar();
   const router = useRouter();
+  const { toggle } = useSidebar();
 
   const handleLogoClick = () => {
     router.push('/');
