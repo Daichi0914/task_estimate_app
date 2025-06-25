@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { sidebarOpenAtom } from '../jotai/atoms/sidebarAtom';
+import { sidebarOpenAtom } from '@/jotai/atoms/sidebarAtom';
 
 export const useSidebar = () => {
   const [isOpen, setIsOpen] = useAtom(sidebarOpenAtom);

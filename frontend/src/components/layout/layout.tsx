@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Header } from './header';
-import { useSidebar } from '../../hooks/useSidebar';
-import { WorkspaceSidebar } from './sidebar';
+import clsx from 'clsx';
+import { Header } from '@/components/layout/header';
+import { useSidebar } from '@/hooks/useSidebar';
+import { WorkspaceSidebar } from '@/components/layout/sidebar';
+import { layoutStyles } from '@/styles/components/layout';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,19 +14,31 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isOpen } = useSidebar();
 
+  const sidebarClasses = clsx(
+    layoutStyles.sidebar.base,
+    {
+      [layoutStyles.sidebar.open]: isOpen,
+      [layoutStyles.sidebar.closed]: !isOpen,
+    }
+  );
+
+  const mainClasses = clsx(
+    layoutStyles.main.base,
+    {
+      [layoutStyles.main.withSidebar]: isOpen,
+      [layoutStyles.main.withoutSidebar]: !isOpen,
+    }
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={layoutStyles.container}>
       <Header />
       <div className="flex relative">
-        <div className={`fixed top-16 left-0 h-full transition-transform duration-300 ease-in-out z-30 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
+        <div className={sidebarClasses}>
           <WorkspaceSidebar />
         </div>
         
-        <main className={`transition-all duration-300 ease-in-out p-6 flex-1 ${
-          isOpen ? 'ml-80' : 'ml-0'
-        }`}>
+        <main className={mainClasses}>
           {children}
         </main>
       </div>

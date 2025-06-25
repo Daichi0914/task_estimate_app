@@ -1,6 +1,6 @@
+import AppProvider from '@/provider/AppProvider';
+import Home from '@/app/page';
 import { render, screen } from '@testing-library/react';
-import AppProvider from '../src/provider/AppProvider';
-import Home from '../src/app/page';
 
 // Next.jsのuseRouterをモック
 jest.mock('next/navigation', () => ({
@@ -16,13 +16,15 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-describe('Home page', () => {
-  it('renders the template text', () => {
+describe('Home', () => {
+  it('renders a heading', () => {
     render(
       <AppProvider>
         <Home />
       </AppProvider>
     );
-    expect(screen.getByText('TaskEstimate')).toBeInTheDocument();
+
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading).toBeInTheDocument();
   });
 });

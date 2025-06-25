@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useSidebar } from '../../hooks/useSidebar';
+import { useSidebar } from '@/hooks/useSidebar';
 
 export const WorkspaceSidebar: React.FC = () => {
   const { toggle } = useSidebar();

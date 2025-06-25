@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FolderIcon, UserIcon } from '../ui/icons';
-import { useSidebar } from '../../hooks/useSidebar';
+import { FolderIcon, UserIcon } from '@/components/ui/icons';
+import { useSidebar } from '@/hooks/useSidebar';
+import { headerStyles } from '@/styles/components/header';
+import { layoutStyles } from '@/styles/components/layout';
+import { buttonStyles } from '@/styles/components/button';
 
 export const Header: React.FC = () => {
   const router = useRouter();
@@ -18,11 +21,11 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3 relative z-40">
-      <div className="flex items-center justify-between">
+    <header className={headerStyles.base}>
+      <div className={layoutStyles.flex}>
         <button
           onClick={toggle}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className={buttonStyles.base}
           aria-label="ワークスペースメニューを開く"
         >
           <FolderIcon />
@@ -31,20 +34,20 @@ export const Header: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleLogoClick}
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            className={buttonStyles.logo}
           >
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className={headerStyles.logo.container}>
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">TaskEstimate</span>
+            <span className={headerStyles.logo.text}>TaskEstimate</span>
           </button>
         </div>
         
         <button
           onClick={handleUserIconClick}
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className={buttonStyles.rounded}
           aria-label="ユーザー設定"
         >
           <UserIcon />
