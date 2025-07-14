@@ -6,7 +6,7 @@ import { Layout } from '@/components/layout/layout';
 export default function Home() {
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
+      <div>
         <h1>ホーム</h1>
       </div>
     </Layout>
