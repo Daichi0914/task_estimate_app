@@ -46,4 +46,4 @@ func (h *ResponseHandler) SendNotFound(message string) {
 func (h *ResponseHandler) SendSuccess(statusCode int, data interface{}) {
 	resp := NewJSONResponse(h.writer)
 	resp.Encode(statusCode, data)
-} 
+}

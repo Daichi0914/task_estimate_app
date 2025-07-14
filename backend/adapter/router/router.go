@@ -11,13 +11,15 @@ import (
 
 // Router はアプリケーションのルーターを設定します
 type Router struct {
-	userHandler *handler.UserHandler
+	userHandler      *handler.UserHandler
+	workspaceHandler *handler.WorkspaceHandler
 }
 
 // NewRouter はRouterを生成します
-func NewRouter(userHandler *handler.UserHandler) *Router {
+func NewRouter(userHandler *handler.UserHandler, workspaceHandler *handler.WorkspaceHandler) *Router {
 	return &Router{
-		userHandler: userHandler,
+		userHandler:      userHandler,
+		workspaceHandler: workspaceHandler,
 	}
 }
 
@@ -35,6 +37,13 @@ func (r *Router) Setup() *mux.Router {
 	api.HandleFunc("/users", r.userHandler.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	api.HandleFunc("/users", r.userHandler.CreateUser).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/users/{id}", r.userHandler.GetUser).Methods(http.MethodGet, http.MethodOptions)
+
+	// ワークスペース関連のエンドポイント
+	api.HandleFunc("/workspaces", r.workspaceHandler.CreateWorkspace).Methods(http.MethodPost, http.MethodOptions)
+	api.HandleFunc("/workspaces", r.workspaceHandler.GetWorkspaces).Methods(http.MethodGet, http.MethodOptions)
+	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.GetWorkspace).Methods(http.MethodGet, http.MethodOptions)
+	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.UpdateWorkspace).Methods(http.MethodPut, http.MethodOptions)
+	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.DeleteWorkspace).Methods(http.MethodDelete, http.MethodOptions)
 
 	// ヘルスチェック
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

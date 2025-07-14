@@ -27,18 +27,22 @@ func main() {
 
 	// リポジトリの初期化
 	userRepo := repository.NewUserRepository(db)
+	workspaceRepo := repository.NewWorkspaceRepository(db)
 
 	// ドメインサービスの初期化
 	userService := services.NewUserService(userRepo)
+	workspaceService := services.NewWorkspaceService(workspaceRepo)
 
 	// ユースケースの初期化
 	userInteractor := interactor.NewUserInteractor(userRepo, userService)
+	workspaceInteractor := interactor.NewWorkspaceInteractor(workspaceRepo, workspaceService)
 
 	// ハンドラーの初期化
 	userHandler := handler.NewUserHandler(userInteractor)
+	workspaceHandler := handler.NewWorkspaceHandler(workspaceInteractor)
 
 	// ルーターの設定
-	r := router.NewRouter(userHandler)
+	r := router.NewRouter(userHandler, workspaceHandler)
 	muxRouter := r.Setup()
 
 	// サーバーの起動
