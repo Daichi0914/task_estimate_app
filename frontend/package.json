@@ -46,6 +46,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.4",
     "postcss-nested": "^7.0.2",
+    "prettier": "^3.6.2",
     "sass": "^1.87.0",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
