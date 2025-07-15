@@ -1,4 +1,4 @@
-import { apiClient } from '../api-client';
+import { apiClient } from '@/lib/api-client';
 import type { User, CreateUserRequest } from '@/types/user';
 
 // バックエンドのレスポンス形式に合わせた型

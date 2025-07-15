@@ -1,4 +1,4 @@
-import { apiClient } from '../api-client';
+import { apiClient } from '@/lib/api-client';
 import type { Workspace, CreateWorkspaceRequest } from '@/types/workspace';
 
 interface WorkspacesResponse {
