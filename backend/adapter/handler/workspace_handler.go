@@ -40,7 +40,7 @@ func (h *WorkspaceHandler) GetWorkspaces(w http.ResponseWriter, r *http.Request)
 		handler.SendInternalServerError()
 		return
 	}
-	handler.SendSuccess(http.StatusOK, workspaces)
+	handler.SendSuccess(http.StatusOK, map[string]interface{}{"data": workspaces})
 }
 
 func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) {

@@ -2,10 +2,10 @@ import { apiClient } from '../api-client';
 import type { Workspace, CreateWorkspaceRequest } from '@/types/workspace';
 
 interface WorkspacesResponse {
-  workspaces: Workspace[];
+  data: Workspace[];
 }
 
-export const WorkspacesApi = {
+export const workspacesApi = {
   // ワークスペース一覧取得
   async getWorkspaces(): Promise<WorkspacesResponse> {
     return apiClient.get<WorkspacesResponse>('/workspaces');
@@ -17,8 +17,8 @@ export const WorkspacesApi = {
   },
 
   // ワークスペース更新
-  async updateWorkspace(data: CreateWorkspaceRequest): Promise<Workspace> {
-    return apiClient.put<Workspace, CreateWorkspaceRequest>('/workspaces', data);
+  async updateWorkspace(id: string, data: CreateWorkspaceRequest): Promise<Workspace> {
+    return apiClient.put<Workspace, CreateWorkspaceRequest>(`/workspaces/${id}`, data);
   },
 
   // ワークスペース削除

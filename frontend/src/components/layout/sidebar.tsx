@@ -1,26 +1,21 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { useSidebar } from '@/hooks/useSidebar';
+import CreateWorkspaceForm from '../workspace/createWorkspaceForm';
+import { useWorkspace } from '@/hooks/useWorkspace';
 
 export const WorkspaceSidebar: React.FC = () => {
   const { toggle } = useSidebar();
-  const [isShownCreateWorkSpace, setIsShownCreateWorkSpace] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { workspaces, isLoading } = useWorkspace();
 
-  useEffect(() => {
-    if (!isShownCreateWorkSpace || !inputRef.current) return;
-    inputRef.current.focus();
-  }, [isShownCreateWorkSpace])
+  const renderContent = () => {
+    if (isLoading) return <p>読み込み中...</p>;
 
-  const showCreateWorkSpace = () => {
-    if (isShownCreateWorkSpace) return;
-    setIsShownCreateWorkSpace(true);
-  };
+    if (!workspaces || workspaces.length === 0) return <p>ワークスペースがありません</p>;
 
-  const hideCreateWorkSpace = () => {
-    if (!isShownCreateWorkSpace) return;
-    setIsShownCreateWorkSpace(false);
+    return workspaces.map((workspace) => (
+      <div key={workspace.id}>{workspace.name}</div>
+    ));
   };
 
   return (
@@ -38,42 +33,10 @@ export const WorkspaceSidebar: React.FC = () => {
             </svg>
           </button>
         </div>
-        <div className='h-[calc(100% - 148px)] scroll-auto'>
+        <div className='h-[calc(100% - 124px)] scroll-auto'>
+          {renderContent()}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-[148px] px-4 py-6 flex flex-col justify-end">
-          {isShownCreateWorkSpace ? (
-            <form>
-              <input
-                type="text"
-                name='workspaceName'
-                className="w-full p-3 border border-black rounded-lg"
-                ref={inputRef}
-              />
-              <div className="flex justify-between gap-4 mt-4">
-                <button
-                  type='button'
-                  className="w-full p-1 bg-white hover:bg-gray-100 text-black border border-black rounded-lg transition-colors cursor-pointer"
-                  onClick={hideCreateWorkSpace}
-                >
-                  キャンセル
-                </button>
-                <button
-                  type='button'
-                  className="w-full p-1 bg-black hover:bg-gray-700 text-white rounded-lg transition-colors cursor-pointer"
-                >
-                  作成する
-                </button>
-              </div>
-            </form>
-          ) : (
-            <button
-              className="w-full mt-4 p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-              onClick={showCreateWorkSpace}
-            >
-              + 新しいワークスペース
-            </button>
-          )}
-        </div>
+        <CreateWorkspaceForm />
       </div>
     </div>
   );
