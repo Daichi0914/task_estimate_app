@@ -15,21 +15,18 @@ import (
 	"task_estimate_app/backend/usecase/interactor"
 )
 
-// UserInteractorInterface はユーザーインタラクターのインターフェースを定義します
 type UserInteractorInterface interface {
 	GetUser(ctx context.Context, input *dto.GetUserInput) (*dto.UserOutput, error)
 	GetUsers(ctx context.Context) (*dto.UsersOutput, error)
 	CreateUser(ctx context.Context, input *dto.CreateUserInput) (*dto.UserOutput, error)
 }
 
-// UserHandler はユーザー関連のHTTPリクエストを処理します
 type UserHandler struct {
 	userInteractor UserInteractorInterface
 	userRepo       domainRepo.UserRepository
 	userService    services.UserServiceInterface
 }
 
-// NewUserHandler はUserHandlerを生成します
 func NewUserHandler(userInteractor UserInteractorInterface, userRepo domainRepo.UserRepository, userService services.UserServiceInterface) *UserHandler {
 	return &UserHandler{
 		userInteractor: userInteractor,
@@ -38,7 +35,13 @@ func NewUserHandler(userInteractor UserInteractorInterface, userRepo domainRepo.
 	}
 }
 
-// GetUser はユーザー情報を取得するハンドラーです
+// @Summary      ユーザー取得
+// @Description  指定したIDのユーザー情報を取得
+// @Produce      json
+// @Param        id path string true "ユーザーID"
+// @Success      200 {object} dto.UserOutput
+// @Failure      404 {string} string "user not found"
+// @Router       /users/{id} [get]
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userID := vars["id"]
@@ -68,7 +71,11 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	handler.SendSuccess(http.StatusOK, output)
 }
 
-// GetUsers はユーザー一覧を取得するハンドラーです
+// @Summary      ユーザー一覧取得
+// @Description  全ユーザーの一覧を取得
+// @Produce      json
+// @Success      200 {object} dto.UsersOutput
+// @Router       /users [get]
 func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -92,7 +99,14 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	handler.SendSuccess(http.StatusOK, output)
 }
 
-// CreateUser は新規ユーザーを作成するハンドラーです
+// @Summary      ユーザー作成
+// @Description  新しいユーザーを作成
+// @Accept       json
+// @Produce      json
+// @Param        user body dto.CreateUserInput true "ユーザー作成情報"
+// @Success      201 {object} dto.UserOutput
+// @Failure      400 {string} string "invalid request body or email already exists"
+// @Router       /users [post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var input dto.CreateUserInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -121,6 +135,14 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	handler.SendSuccess(http.StatusCreated, output)
 }
 
+// @Summary      ログイン
+// @Description  ユーザーのログイン
+// @Accept       json
+// @Produce      json
+// @Param        login body dto.LoginRequestDTO true "ログイン情報"
+// @Success      200 {object} dto.LoginResponseDTO
+// @Failure      401 {string} string "invalid credentials"
+// @Router       /login [post]
 func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

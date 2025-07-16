@@ -1,4 +1,4 @@
-FROM golang:1.24.2-alpine
+FROM golang:1.24-alpine
 
 # 必要なツールのインストール
 RUN apk add --no-cache git bash
@@ -8,6 +8,9 @@ ENV GO111MODULE=on \
     PATH=$PATH:/go/bin
 
 RUN go install github.com/air-verse/air@latest
+
+# swagコマンドのインストール
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 # アプリの作業ディレクトリ
 WORKDIR /app

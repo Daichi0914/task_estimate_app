@@ -18,6 +18,14 @@ func NewWorkspaceHandler(interactor *interactor.WorkspaceInteractor) *WorkspaceH
 	return &WorkspaceHandler{WorkspaceInteractor: interactor}
 }
 
+// @Summary      ワークスペース作成
+// @Description  新しいワークスペースを作成
+// @Accept       json
+// @Produce      json
+// @Param        workspace body dto.CreateWorkspaceInput true "ワークスペース作成情報"
+// @Success      201 {object} dto.WorkspaceOutput
+// @Failure      400 {string} string "invalid request body"
+// @Router       /workspaces [post]
 func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	var input dto.CreateWorkspaceInput
@@ -33,6 +41,11 @@ func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reques
 	handler.SendSuccess(http.StatusCreated, output)
 }
 
+// @Summary      ワークスペース一覧取得
+// @Description  全ワークスペースの一覧を取得
+// @Produce      json
+// @Success      200 {object} dto.WorkspacesOutput
+// @Router       /workspaces [get]
 func (h *WorkspaceHandler) GetWorkspaces(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	workspaces, err := h.WorkspaceInteractor.WorkspaceRepo.FindAll(r.Context())
@@ -40,9 +53,17 @@ func (h *WorkspaceHandler) GetWorkspaces(w http.ResponseWriter, r *http.Request)
 		handler.SendInternalServerError()
 		return
 	}
-	handler.SendSuccess(http.StatusOK, map[string]interface{}{"data": workspaces})
+	output := interactor.NewWorkspacesOutput(workspaces)
+	handler.SendSuccess(http.StatusOK, output)
 }
 
+// @Summary      ワークスペース取得
+// @Description  指定したIDのワークスペース情報を取得
+// @Produce      json
+// @Param        id path string true "ワークスペースID"
+// @Success      200 {object} dto.WorkspaceOutput
+// @Failure      404 {string} string "workspace not found"
+// @Router       /workspaces/{id} [get]
 func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	vars := mux.Vars(r)
@@ -59,13 +80,20 @@ func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) 
 	handler.SendSuccess(http.StatusOK, ws)
 }
 
+// @Summary      ワークスペース更新
+// @Description  指定したIDのワークスペース名を更新
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "ワークスペースID"
+// @Param        workspace body dto.UpdateWorkspaceInput true "ワークスペース名"
+// @Success      204 {string} string "No Content"
+// @Failure      404 {string} string "workspace not found"
+// @Router       /workspaces/{id} [put]
 func (h *WorkspaceHandler) UpdateWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	vars := mux.Vars(r)
 	id := vars["id"]
-	var input struct {
-		Name string `json:"name"`
-	}
+	var input dto.UpdateWorkspaceInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		handler.SendBadRequest("invalid request body")
 		return
@@ -81,6 +109,13 @@ func (h *WorkspaceHandler) UpdateWorkspace(w http.ResponseWriter, r *http.Reques
 	handler.SendSuccess(http.StatusNoContent, nil)
 }
 
+// @Summary      ワークスペース削除
+// @Description  指定したIDのワークスペースを削除
+// @Produce      json
+// @Param        id path string true "ワークスペースID"
+// @Success      204 {string} string "No Content"
+// @Failure      404 {string} string "workspace not found"
+// @Router       /workspaces/{id} [delete]
 func (h *WorkspaceHandler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	vars := mux.Vars(r)

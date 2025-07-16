@@ -64,3 +64,15 @@ func (i *WorkspaceInteractor) DeleteWorkspace(ctx context.Context, id string) er
 	}
 	return i.WorkspaceRepo.Delete(ctx, id)
 }
+
+// EntityからDTOへの変換
+func NewWorkspacesOutput(workspaces []*entity.Workspace) *dto.WorkspacesOutput {
+	outputs := make([]*dto.WorkspaceOutput, len(workspaces))
+	for i, ws := range workspaces {
+		outputs[i] = &dto.WorkspaceOutput{
+			ID:   ws.ID,
+			Name: ws.Name,
+		}
+	}
+	return &dto.WorkspacesOutput{Data: outputs}
+}

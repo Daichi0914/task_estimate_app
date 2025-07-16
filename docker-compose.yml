@@ -29,7 +29,7 @@ services:
     env_file:
       - .env.dev
     working_dir: /app
-    command: ["air"]
+    command: ["/bin/sh", "-c", "/go/bin/swag init -g cmd/api/main.go && air"]
 
   backend_test:
     build: ./backend

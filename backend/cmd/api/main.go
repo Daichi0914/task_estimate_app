@@ -1,3 +1,8 @@
+// @title           Task Estimate API
+// @version         1.0
+// @description     This is the API documentation for Task Estimate App.
+// @host            localhost:8080
+// @BasePath        /api/v1
 package main
 
 import (
@@ -12,6 +17,10 @@ import (
 	"task_estimate_app/backend/infrastructure/bootstrap"
 	"task_estimate_app/backend/infrastructure/config"
 	"task_estimate_app/backend/usecase/interactor"
+
+	_ "task_estimate_app/backend/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
@@ -43,12 +52,17 @@ func main() {
 
 	// ルーターの設定
 	r := router.NewRouter(userHandler, workspaceHandler)
-	muxRouter := r.Setup()
+	router := r.Setup()
+
+	// Swagger UIエンドポイント追加
+	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
 
 	// サーバーの起動
 	addr := fmt.Sprintf(":%s", cfg.ServerPort)
 	log.Printf("Server starting on %s", addr)
-	if err := http.ListenAndServe(addr, muxRouter); err != nil {
+	if err := http.ListenAndServe(addr, router); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }
