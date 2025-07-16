@@ -38,7 +38,7 @@ func main() {
 	workspaceInteractor := interactor.NewWorkspaceInteractor(workspaceRepo, workspaceService)
 
 	// ハンドラーの初期化
-	userHandler := handler.NewUserHandler(userInteractor)
+	userHandler := handler.NewUserHandler(userInteractor, userRepo, userService)
 	workspaceHandler := handler.NewWorkspaceHandler(workspaceInteractor)
 
 	// ルーターの設定

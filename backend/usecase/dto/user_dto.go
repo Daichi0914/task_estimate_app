@@ -52,3 +52,14 @@ func NewUsersOutput(users []*entity.User) *UsersOutput {
 		Users: userOutputs,
 	}
 }
+
+// ログインリクエストのDTO
+type LoginRequestDTO struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+// ログインレスポンスのDTO
+type LoginResponseDTO struct {
+	Token string `json:"token"`
+}

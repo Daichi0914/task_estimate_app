@@ -1,6 +1,7 @@
 import '@/styles/globals.css';
 import AppProvider from '@/provider/AppProvider';
 import { ReactNode } from 'react';
+import AuthGuard from "@/components/auth/AuthGuard";
 
 export const metadata = {
   title: 'Task Timer',
@@ -10,9 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
-      <body className="box-border">
+      <body>
         <AppProvider>
-          {children}
+          <AuthGuard>{children}</AuthGuard>
         </AppProvider>
       </body>
     </html>

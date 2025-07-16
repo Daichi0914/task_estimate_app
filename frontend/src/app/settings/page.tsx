@@ -5,8 +5,10 @@ import clsx from 'clsx';
 import { Layout } from '@/components/layout/layout';
 import { Card } from '@/components/ui/card';
 import { settingsStyles } from '@/styles/components/settings';
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
 
@@ -25,6 +27,11 @@ export default function SettingsPage() {
       [settingsStyles.toggle.switch.thumbOff]: !isOn,
     }
   );
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.replace("/login");
+  };
 
   return (
     <Layout>
@@ -102,7 +109,10 @@ export default function SettingsPage() {
               <button className={settingsStyles.account.deleteButton}>
                 アカウントを削除
               </button>
-              <button className={settingsStyles.account.logoutButton}>
+              <button 
+                onClick={handleLogout}
+                className={settingsStyles.account.logoutButton}
+              >
                 ログアウト
               </button>
             </div>

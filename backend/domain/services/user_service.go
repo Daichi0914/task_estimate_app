@@ -4,16 +4,27 @@ import (
 	"context"
 	"errors"
 
+	"task_estimate_app/backend/domain/entity"
 	"task_estimate_app/backend/domain/repository"
+
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	ErrEmailAlreadyExists = errors.New("email already exists")
+	ErrInvalidCredentials = errors.New("invalid email or password")
 )
+
+const jwtSecret = "your-secret-key" // TODO: 環境変数等で管理
+const jwtExpireDuration = time.Hour * 24
 
 // UserServiceInterface はユーザーサービスのインターフェースを定義します
 type UserServiceInterface interface {
 	ValidateUniqueEmail(ctx context.Context, email string) bool
+	Authenticate(ctx context.Context, email, password string) (*entity.User, error)
 }
 
 // UserService はユーザーに関するドメインサービスです
@@ -40,4 +51,26 @@ func (s *UserService) ValidateUniqueEmail(ctx context.Context, email string) boo
 	}
 	// userがnilの場合、そのメールアドレスのユーザーは存在しないため一意
 	return user == nil
-} 
+}
+
+// Authenticate はメールアドレスとパスワードでユーザー認証を行います
+func (s *UserService) Authenticate(ctx context.Context, email, password string) (*entity.User, error) {
+	user, err := s.userRepo.FindByEmail(ctx, email)
+	if err != nil || user == nil {
+		return nil, ErrInvalidCredentials
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return nil, ErrInvalidCredentials
+	}
+	return user, nil
+}
+
+// GenerateJWT はユーザーIDを元にJWTトークンを生成します
+func GenerateJWT(userID string) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(jwtExpireDuration).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(jwtSecret))
+}

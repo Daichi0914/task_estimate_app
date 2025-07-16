@@ -38,6 +38,9 @@ func (r *Router) Setup() *mux.Router {
 	api.HandleFunc("/users", r.userHandler.CreateUser).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/users/{id}", r.userHandler.GetUser).Methods(http.MethodGet, http.MethodOptions)
 
+	// ログインエンドポイント
+	api.HandleFunc("/login", r.userHandler.LoginHandler).Methods(http.MethodPost, http.MethodOptions)
+
 	// ワークスペース関連のエンドポイント
 	api.HandleFunc("/workspaces", r.workspaceHandler.CreateWorkspace).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/workspaces", r.workspaceHandler.GetWorkspaces).Methods(http.MethodGet, http.MethodOptions)

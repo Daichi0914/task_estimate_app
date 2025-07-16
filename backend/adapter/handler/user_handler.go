@@ -7,7 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"log"
 	"task_estimate_app/backend/adapter/middleware"
+	domainRepo "task_estimate_app/backend/domain/repository"
 	"task_estimate_app/backend/domain/services"
 	"task_estimate_app/backend/usecase/dto"
 	"task_estimate_app/backend/usecase/interactor"
@@ -23,12 +25,16 @@ type UserInteractorInterface interface {
 // UserHandler はユーザー関連のHTTPリクエストを処理します
 type UserHandler struct {
 	userInteractor UserInteractorInterface
+	userRepo       domainRepo.UserRepository
+	userService    services.UserServiceInterface
 }
 
 // NewUserHandler はUserHandlerを生成します
-func NewUserHandler(userInteractor UserInteractorInterface) *UserHandler {
+func NewUserHandler(userInteractor UserInteractorInterface, userRepo domainRepo.UserRepository, userService services.UserServiceInterface) *UserHandler {
 	return &UserHandler{
 		userInteractor: userInteractor,
+		userRepo:       userRepo,
+		userService:    userService,
 	}
 }
 
@@ -57,7 +63,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if output != nil {
 		output.Name = middleware.SanitizeString(output.Name)
 	}
-	
+
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -81,7 +87,7 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	
+
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -97,7 +103,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// 入力データの正規化
 	input.Name = middleware.SanitizeString(input.Name)
-	
+
 	ctx := r.Context()
 	output, err := h.userInteractor.CreateUser(ctx, &input)
 	if err != nil {
@@ -113,4 +119,31 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusCreated, output)
+}
+
+func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	var req dto.LoginRequestDTO
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Printf("[LoginHandler] JSON decode error: %v", err)
+		http.Error(w, "invalid request", http.StatusBadRequest)
+		return
+	}
+	ctx := context.Background()
+	user, err := h.userService.Authenticate(ctx, req.Email, req.Password)
+	if err != nil {
+		log.Printf("[LoginHandler] Auth error: %v (email=%s)", err, req.Email)
+		http.Error(w, "invalid credentials", http.StatusUnauthorized)
+		return
+	}
+	token, err := services.GenerateJWT(user.ID)
+	if err != nil {
+		log.Printf("[LoginHandler] JWT error: %v", err)
+		http.Error(w, "failed to generate token", http.StatusInternalServerError)
+		return
+	}
+	res := dto.LoginResponseDTO{Token: token}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		log.Printf("[LoginHandler] Response encode error: %v", err)
+	}
 }
