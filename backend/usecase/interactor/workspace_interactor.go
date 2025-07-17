@@ -36,6 +36,10 @@ func (i *WorkspaceInteractor) CreateWorkspace(ctx context.Context, input *dto.Cr
 	if err := i.WorkspaceRepo.Create(ctx, workspace); err != nil {
 		return nil, err
 	}
+
+	if err := i.WorkspaceRepo.AddUserWorkspace(ctx, input.UserID, workspace.ID); err != nil {
+		return nil, err
+	}
 	return &dto.WorkspaceOutput{
 		ID:   workspace.ID,
 		Name: workspace.Name,
@@ -63,6 +67,14 @@ func (i *WorkspaceInteractor) DeleteWorkspace(ctx context.Context, id string) er
 		return errors.New("workspace not found")
 	}
 	return i.WorkspaceRepo.Delete(ctx, id)
+}
+
+func (i *WorkspaceInteractor) GetWorkspacesByUserID(ctx context.Context, userID string) *dto.WorkspacesOutput {
+	workspaces, err := i.WorkspaceRepo.FindByUserID(ctx, userID)
+	if err != nil {
+		return &dto.WorkspacesOutput{Data: []*dto.WorkspaceOutput{}} // エラー時は空リスト返却
+	}
+	return NewWorkspacesOutput(workspaces)
 }
 
 // EntityからDTOへの変換

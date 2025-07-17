@@ -61,5 +61,6 @@ type LoginRequestDTO struct {
 
 // ログインレスポンスのDTO
 type LoginResponseDTO struct {
-	Token string `json:"token"`
+	Token  string `json:"token"`
+	UserID string `json:"user_id"`
 }

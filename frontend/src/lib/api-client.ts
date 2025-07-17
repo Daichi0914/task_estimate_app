@@ -11,9 +11,11 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    const userId = typeof window !== 'undefined' ? localStorage.getItem("user_id") : null;
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        ...(userId ? { 'X-USER-ID': userId } : {}),
         ...options.headers,
       },
       ...options,

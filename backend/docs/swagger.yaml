@@ -11,6 +11,8 @@ definitions:
     properties:
       name:
         type: string
+      user_id:
+        type: string
     type: object
   dto.LoginRequestDTO:
     properties:
@@ -22,6 +24,8 @@ definitions:
   dto.LoginResponseDTO:
     properties:
       token:
+        type: string
+      user_id:
         type: string
     type: object
   dto.UpdateWorkspaceInput:

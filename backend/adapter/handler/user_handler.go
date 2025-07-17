@@ -163,7 +163,7 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to generate token", http.StatusInternalServerError)
 		return
 	}
-	res := dto.LoginResponseDTO{Token: token}
+	res := dto.LoginResponseDTO{Token: token, UserID: user.ID}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		log.Printf("[LoginHandler] Response encode error: %v", err)

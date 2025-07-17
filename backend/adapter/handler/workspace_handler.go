@@ -33,6 +33,12 @@ func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reques
 		handler.SendBadRequest("invalid request body")
 		return
 	}
+	userID := r.Header.Get("X-USER-ID")
+	if userID == "" {
+		handler.SendBadRequest("ユーザーIDが必要です（X-USER-IDヘッダー）")
+		return
+	}
+	input.UserID = userID
 	output, err := h.WorkspaceInteractor.CreateWorkspace(r.Context(), &input)
 	if err != nil {
 		if err.Error() == "workspace name already exists" {
@@ -52,12 +58,12 @@ func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reques
 // @Router       /workspaces [get]
 func (h *WorkspaceHandler) GetWorkspaces(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
-	workspaces, err := h.WorkspaceInteractor.WorkspaceRepo.FindAll(r.Context())
-	if err != nil {
-		handler.SendInternalServerError()
+	userID := r.Header.Get("X-USER-ID")
+	if userID == "" {
+		handler.SendBadRequest("ユーザーIDが必要です（X-USER-IDヘッダー）")
 		return
 	}
-	output := interactor.NewWorkspacesOutput(workspaces)
+	output := h.WorkspaceInteractor.GetWorkspacesByUserID(r.Context(), userID)
 	handler.SendSuccess(http.StatusOK, output)
 }
 

@@ -73,3 +73,32 @@ func (r *WorkspaceRepository) FindByName(ctx context.Context, name string) (*ent
 	}
 	return &ws, nil
 }
+
+func (r *WorkspaceRepository) FindByUserID(ctx context.Context, userID string) ([]*entity.Workspace, error) {
+	query := `SELECT w.id, w.name FROM workspaces w
+		JOIN user_workspaces uw ON w.id = uw.workspace_id
+		WHERE uw.user_id = ?`
+	rows, err := r.DB.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var workspaces []*entity.Workspace
+	for rows.Next() {
+		var ws entity.Workspace
+		if err := rows.Scan(&ws.ID, &ws.Name); err != nil {
+			return nil, err
+		}
+		workspaces = append(workspaces, &ws)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return workspaces, nil
+}
+
+func (r *WorkspaceRepository) AddUserWorkspace(ctx context.Context, userID, workspaceID string) error {
+	_, err := r.DB.ExecContext(ctx, `INSERT INTO user_workspaces (user_id, workspace_id) VALUES (?, ?)`, userID, workspaceID)
+	return err
+}

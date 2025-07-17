@@ -1,7 +1,8 @@
 package dto
 
 type CreateWorkspaceInput struct {
-	Name string `json:"name"`
+	Name   string `json:"name"`
+	UserID string `json:"user_id"`
 }
 
 type WorkspaceOutput struct {

@@ -26,6 +26,7 @@ export default function LoginPage() {
       }
       const data = await res.json();
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user_id", data.user_id);
       router.push("/");
     } catch {
       setError("通信エラーが発生しました");
