@@ -8,15 +8,20 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from 
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { DragEndEvent } from '@dnd-kit/core';
 import WorkspaceListItem from '../workspace/workspaceListItem';
+import debounce from 'lodash.debounce';
 
 export const WorkspaceSidebar: FC = () => {
   const { toggle } = useSidebar();
-  const { workspaces, isLoading } = useWorkspace();
+  const { workspaces, isLoading, saveWorkspaceOrder } = useWorkspace();
   const [localWorkspaces, setLocalWorkspaces] = useState(workspaces);
 
   useEffect(() => {
     setLocalWorkspaces(workspaces);
   }, [workspaces]);
+
+  const debouncedSaveOrder = debounce((orderArr) => {
+    saveWorkspaceOrder(orderArr);
+  }, 500);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -28,7 +33,8 @@ export const WorkspaceSidebar: FC = () => {
       const newIndex = localWorkspaces.findIndex((w) => w.id === String(over.id));
       const newArr = arrayMove(localWorkspaces, oldIndex, newIndex);
       setLocalWorkspaces(newArr);
-      // 必要に応じてここでAPIで順序保存も可能
+      const orderArr = newArr.map((w, idx) => ({ workspace_id: w.id, sort_order: idx + 1 }));
+      debouncedSaveOrder(orderArr);
     }
   };
 

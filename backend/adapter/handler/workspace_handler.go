@@ -140,3 +140,30 @@ func (h *WorkspaceHandler) DeleteWorkspace(w http.ResponseWriter, r *http.Reques
 	}
 	handler.SendSuccess(http.StatusNoContent, nil)
 }
+
+// @Summary      ワークスペース並び順保存
+// @Description  ワークスペースの並び順を一括保存
+// @Accept       json
+// @Produce      json
+// @Param        order body dto.WorkspaceOrderUpdateInput true "ワークスペース並び順"
+// @Success      204 {string} string "No Content"
+// @Failure      400 {string} string "invalid request body"
+// @Router       /workspaces/order [patch]
+func (h *WorkspaceHandler) UpdateWorkspaceOrder(w http.ResponseWriter, r *http.Request) {
+	handler := middleware.NewResponseHandler(w)
+	userID := r.Header.Get("X-USER-ID")
+	if userID == "" {
+		handler.SendBadRequest("ユーザーIDが必要です（X-USER-IDヘッダー）")
+		return
+	}
+	var input dto.WorkspaceOrderUpdateInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		handler.SendBadRequest("invalid request body")
+		return
+	}
+	if err := h.WorkspaceInteractor.UpdateWorkspaceOrder(r.Context(), userID, input.Orders); err != nil {
+		handler.SendInternalServerError()
+		return
+	}
+	handler.SendSuccess(http.StatusNoContent, nil)
+}

@@ -25,4 +25,12 @@ export const workspacesApi = {
   async deleteWorkspace(id: string): Promise<void> {
     return apiClient.delete<void>(`/workspaces/${id}`);
   },
+
+  // 並び順保存
+  async updateWorkspaceOrder(orders: { workspace_id: string; sort_order: number }[]): Promise<void> {
+    return apiClient.patch<void, { orders: { workspace_id: string; sort_order: number }[] }>(
+      '/workspaces/order',
+      { orders }
+    );
+  },
 };

@@ -44,6 +44,10 @@ func (h *ResponseHandler) SendNotFound(message string) {
 
 // SendSuccess は成功レスポンスを送信します
 func (h *ResponseHandler) SendSuccess(statusCode int, data interface{}) {
+	if statusCode == http.StatusNoContent {
+		h.writer.WriteHeader(http.StatusNoContent)
+		return
+	}
 	resp := NewJSONResponse(h.writer)
 	resp.Encode(statusCode, data)
 }

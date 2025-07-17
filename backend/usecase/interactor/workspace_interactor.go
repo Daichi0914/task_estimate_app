@@ -36,8 +36,16 @@ func (i *WorkspaceInteractor) CreateWorkspace(ctx context.Context, input *dto.Cr
 	if err := i.WorkspaceRepo.Create(ctx, workspace); err != nil {
 		return nil, err
 	}
-
-	if err := i.WorkspaceRepo.AddUserWorkspace(ctx, input.UserID, workspace.ID); err != nil {
+	// そのユーザーの最大sort_order+1を取得
+	workspaces, err := i.WorkspaceRepo.FindByUserID(ctx, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+	sortOrder := 1
+	if len(workspaces) > 0 {
+		sortOrder = len(workspaces) + 1
+	}
+	if err := i.WorkspaceRepo.AddUserWorkspace(ctx, input.UserID, workspace.ID, sortOrder); err != nil {
 		return nil, err
 	}
 	return &dto.WorkspaceOutput{
@@ -75,6 +83,10 @@ func (i *WorkspaceInteractor) GetWorkspacesByUserID(ctx context.Context, userID 
 		return &dto.WorkspacesOutput{Data: []*dto.WorkspaceOutput{}} // エラー時は空リスト返却
 	}
 	return NewWorkspacesOutput(workspaces)
+}
+
+func (i *WorkspaceInteractor) UpdateWorkspaceOrder(ctx context.Context, userID string, orders []dto.WorkspaceOrder) error {
+	return i.WorkspaceRepo.UpdateWorkspaceOrders(ctx, userID, orders)
 }
 
 // EntityからDTOへの変換

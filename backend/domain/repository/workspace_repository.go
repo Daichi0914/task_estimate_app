@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"task_estimate_app/backend/domain/entity"
+	"task_estimate_app/backend/usecase/dto"
 )
 
 type WorkspaceRepository interface {
@@ -12,6 +13,7 @@ type WorkspaceRepository interface {
 	FindByUserID(ctx context.Context, userID string) ([]*entity.Workspace, error)
 	FindByName(ctx context.Context, name string) (*entity.Workspace, error)
 	Update(ctx context.Context, workspace *entity.Workspace) error
-	AddUserWorkspace(ctx context.Context, userID, workspaceID string) error
+	AddUserWorkspace(ctx context.Context, userID, workspaceID string, sortOrder int) error
 	Delete(ctx context.Context, id string) error
+	UpdateWorkspaceOrders(ctx context.Context, userID string, orders []dto.WorkspaceOrder) error
 }

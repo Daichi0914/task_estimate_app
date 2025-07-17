@@ -66,7 +66,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if output != nil {
 		output.Name = middleware.SanitizeString(output.Name)
 	}
-
+	
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -94,7 +94,7 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
+	
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -117,7 +117,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// 入力データの正規化
 	input.Name = middleware.SanitizeString(input.Name)
-
+	
 	ctx := r.Context()
 	output, err := h.userInteractor.CreateUser(ctx, &input)
 	if err != nil {

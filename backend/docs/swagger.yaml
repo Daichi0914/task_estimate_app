@@ -53,6 +53,20 @@ definitions:
           $ref: '#/definitions/dto.UserOutput'
         type: array
     type: object
+  dto.WorkspaceOrder:
+    properties:
+      sort_order:
+        type: integer
+      workspace_id:
+        type: string
+    type: object
+  dto.WorkspaceOrderUpdateInput:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/dto.WorkspaceOrder'
+        type: array
+    type: object
   dto.WorkspaceOutput:
     properties:
       id:
@@ -267,4 +281,28 @@ paths:
           schema:
             type: string
       summary: ワークスペース更新
+  /workspaces/order:
+    patch:
+      consumes:
+      - application/json
+      description: ワークスペースの並び順を一括保存
+      parameters:
+      - description: ワークスペース並び順
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.WorkspaceOrderUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: invalid request body
+          schema:
+            type: string
+      summary: ワークスペース並び順保存
 swagger: "2.0"

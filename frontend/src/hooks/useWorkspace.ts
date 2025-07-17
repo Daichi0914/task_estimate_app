@@ -10,12 +10,10 @@ export const useWorkspace = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // エラーをリセット
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  // 共通のエラーハンドリング関数
   const handleAsyncOperation = useCallback(
     async <T>(operation: () => Promise<T>, errorMessage: string): Promise<T> => {
       setIsLoading(true);
@@ -35,7 +33,6 @@ export const useWorkspace = () => {
     []
   );
 
-  // ワークスペース一覧取得
   const fetchWorkspaces = useCallback(async () => {
     return handleAsyncOperation(async () => {
       const response = await workspacesApi.getWorkspaces();
@@ -44,7 +41,6 @@ export const useWorkspace = () => {
     }, 'ワークスペース一覧の取得に失敗しました');
   }, [handleAsyncOperation, setWorkspacesOnly]);
 
-  // ワークスペース作成
   const createWorkspace = useCallback(
     async (data: CreateWorkspaceRequest) => {
       return handleAsyncOperation(async () => {
@@ -56,7 +52,6 @@ export const useWorkspace = () => {
     [handleAsyncOperation, fetchWorkspaces]
   );
 
-  // ワークスペース更新
   const updateWorkspace = useCallback(
     async (id: string, data: UpdateWorkspaceRequest) => {
       return handleAsyncOperation(async () => {
@@ -68,7 +63,6 @@ export const useWorkspace = () => {
     [handleAsyncOperation, fetchWorkspaces]
   );
 
-  // ワークスペース削除
   const deleteWorkspace = useCallback(
     async (id: string) => {
       return handleAsyncOperation(async () => {
@@ -78,6 +72,10 @@ export const useWorkspace = () => {
     },
     [handleAsyncOperation, fetchWorkspaces]
   );
+
+  const saveWorkspaceOrder = async (orders: { workspace_id: string; sort_order: number }[]) => {
+    await workspacesApi.updateWorkspaceOrder(orders);
+  };
 
   useEffect(() => {
     fetchWorkspaces();
@@ -92,5 +90,6 @@ export const useWorkspace = () => {
     createWorkspace,
     updateWorkspace,
     deleteWorkspace,
+    saveWorkspaceOrder, // 追加
   };
 };

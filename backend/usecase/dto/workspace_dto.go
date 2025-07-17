@@ -17,3 +17,12 @@ type WorkspacesOutput struct {
 type UpdateWorkspaceInput struct {
 	Name string `json:"name"`
 }
+
+type WorkspaceOrderUpdateInput struct {
+	Orders []WorkspaceOrder `json:"orders"`
+}
+
+type WorkspaceOrder struct {
+	WorkspaceID string `json:"workspace_id"`
+	SortOrder   int    `json:"sort_order"`
+}

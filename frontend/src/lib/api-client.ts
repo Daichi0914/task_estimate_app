@@ -27,7 +27,9 @@ class ApiClient {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+      if (response.status === 204) {
+        return null as T;
+      }
       return await response.json();
     } catch (error) {
       console.error('API request failed:', error);
@@ -55,6 +57,13 @@ class ApiClient {
 
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
+  }
+
+  async patch<T, D>(endpoint: string, data?: D): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+    });
   }
 }
 

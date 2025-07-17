@@ -47,6 +47,7 @@ func (r *Router) Setup() *mux.Router {
 	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.GetWorkspace).Methods(http.MethodGet, http.MethodOptions)
 	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.UpdateWorkspace).Methods(http.MethodPut, http.MethodOptions)
 	api.HandleFunc("/workspaces/{id}", r.workspaceHandler.DeleteWorkspace).Methods(http.MethodDelete, http.MethodOptions)
+	api.HandleFunc("/workspaces/order", r.workspaceHandler.UpdateWorkspaceOrder).Methods(http.MethodPatch, http.MethodOptions)
 
 	// ヘルスチェック
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

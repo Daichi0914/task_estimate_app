@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"task_estimate_app/backend/domain/entity"
+	"task_estimate_app/backend/usecase/dto"
 )
 
 type WorkspaceRepository struct {
@@ -75,10 +76,13 @@ func (r *WorkspaceRepository) FindByName(ctx context.Context, name string) (*ent
 }
 
 func (r *WorkspaceRepository) FindByUserID(ctx context.Context, userID string) ([]*entity.Workspace, error) {
-	query := `SELECT w.id, w.name FROM workspaces w
-		JOIN user_workspaces uw ON w.id = uw.workspace_id
-		WHERE uw.user_id = ?`
-	rows, err := r.DB.QueryContext(ctx, query, userID)
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT w.id, w.name
+		FROM user_workspaces uw
+		JOIN workspaces w ON uw.workspace_id = w.id
+		WHERE uw.user_id = ?
+		ORDER BY uw.sort_order ASC, uw.created_at ASC
+	`, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +102,27 @@ func (r *WorkspaceRepository) FindByUserID(ctx context.Context, userID string) (
 	return workspaces, nil
 }
 
-func (r *WorkspaceRepository) AddUserWorkspace(ctx context.Context, userID, workspaceID string) error {
-	_, err := r.DB.ExecContext(ctx, `INSERT INTO user_workspaces (user_id, workspace_id) VALUES (?, ?)`, userID, workspaceID)
+func (r *WorkspaceRepository) AddUserWorkspace(ctx context.Context, userID, workspaceID string, sortOrder int) error {
+	_, err := r.DB.ExecContext(ctx, `INSERT INTO user_workspaces (user_id, workspace_id, sort_order) VALUES (?, ?, ?)`, userID, workspaceID, sortOrder)
 	return err
+}
+
+func (r *WorkspaceRepository) UpdateWorkspaceOrders(ctx context.Context, userID string, orders []dto.WorkspaceOrder) error {
+	tx, err := r.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	stmt, err := tx.PrepareContext(ctx, `UPDATE user_workspaces SET sort_order = ? WHERE user_id = ? AND workspace_id = ?`)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+	for _, order := range orders {
+		if _, err := stmt.ExecContext(ctx, order.SortOrder, userID, order.WorkspaceID); err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	return tx.Commit()
 }

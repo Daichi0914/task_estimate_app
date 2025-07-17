@@ -205,6 +205,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/workspaces/order": {
+            "patch": {
+                "description": "ワークスペースの並び順を一括保存",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ワークスペース並び順保存",
+                "parameters": [
+                    {
+                        "description": "ワークスペース並び順",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.WorkspaceOrderUpdateInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/workspaces/{id}": {
             "get": {
                 "description": "指定したIDのワークスペース情報を取得",
@@ -390,6 +427,28 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.UserOutput"
+                    }
+                }
+            }
+        },
+        "dto.WorkspaceOrder": {
+            "type": "object",
+            "properties": {
+                "sort_order": {
+                    "type": "integer"
+                },
+                "workspace_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.WorkspaceOrderUpdateInput": {
+            "type": "object",
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.WorkspaceOrder"
                     }
                 }
             }
