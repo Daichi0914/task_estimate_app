@@ -106,9 +106,6 @@ export default function SettingsPage() {
           <Card className={settingsStyles.card}>
             <h2 className={settingsStyles.section.title}>アカウント管理</h2>
             <div className={settingsStyles.section.content}>
-              <button className={settingsStyles.account.deleteButton}>
-                アカウントを削除
-              </button>
               <button 
                 onClick={handleLogout}
                 className={settingsStyles.account.logoutButton}

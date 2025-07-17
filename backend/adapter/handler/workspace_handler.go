@@ -35,6 +35,10 @@ func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reques
 	}
 	output, err := h.WorkspaceInteractor.CreateWorkspace(r.Context(), &input)
 	if err != nil {
+		if err.Error() == "workspace name already exists" {
+			handler.SendError(http.StatusConflict, "同じ名前のワークスペースは作成できません")
+			return
+		}
 		handler.SendInternalServerError()
 		return
 	}

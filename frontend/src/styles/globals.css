@@ -3,3 +3,12 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.3em); }
+}
+.animate-wave {
+  animation: wave .3s infinite;
+  display: inline-block;
+}

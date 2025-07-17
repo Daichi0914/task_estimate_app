@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { workspacesApi } from "@/lib/api";
-import { CreateWorkspaceRequest, UpdateWorkspaceRequest, Workspace } from "@/types/workspace";
+import { useCallback, useEffect, useState } from 'react';
+import { workspacesApi } from '@/lib/api';
+import { CreateWorkspaceRequest, UpdateWorkspaceRequest } from '@/types/workspace';
+import { useAtom, useSetAtom } from 'jotai';
+import { workspacesAtom } from '@/jotai/atoms/workspaceAtom';
 
 export const useWorkspace = () => {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces] = useAtom(workspacesAtom);
+  const setWorkspacesOnly = useSetAtom(workspacesAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,10 +17,7 @@ export const useWorkspace = () => {
 
   // 共通のエラーハンドリング関数
   const handleAsyncOperation = useCallback(
-    async <T>(
-      operation: () => Promise<T>,
-      errorMessage: string
-    ): Promise<T> => {
+    async <T>(operation: () => Promise<T>, errorMessage: string): Promise<T> => {
       setIsLoading(true);
       setError(null);
 
@@ -39,21 +39,21 @@ export const useWorkspace = () => {
   const fetchWorkspaces = useCallback(async () => {
     return handleAsyncOperation(async () => {
       const response = await workspacesApi.getWorkspaces();
-      setWorkspaces(response.data);
+      setWorkspacesOnly(response.data);
       return response.data;
-    }, "ワークスペース一覧の取得に失敗しました");
-  }, [handleAsyncOperation]);
+    }, 'ワークスペース一覧の取得に失敗しました');
+  }, [handleAsyncOperation, setWorkspacesOnly]);
 
   // ワークスペース作成
   const createWorkspace = useCallback(
     async (data: CreateWorkspaceRequest) => {
       return handleAsyncOperation(async () => {
         const newWorkspace = await workspacesApi.createWorkspace(data);
-        setWorkspaces((prev) => [...prev, newWorkspace]);
+        await fetchWorkspaces();
         return newWorkspace;
-      }, "ワークスペースの作成に失敗しました");
+      }, 'ワークスペースの作成に失敗しました');
     },
-    [handleAsyncOperation]
+    [handleAsyncOperation, fetchWorkspaces]
   );
 
   // ワークスペース更新
@@ -61,25 +61,22 @@ export const useWorkspace = () => {
     async (id: string, data: UpdateWorkspaceRequest) => {
       return handleAsyncOperation(async () => {
         const updatedWorkspace = await workspacesApi.updateWorkspace(id, data);
-        setWorkspaces((prev) => prev.map((workspace) => workspace.id === id ? updatedWorkspace : workspace));
+        await fetchWorkspaces();
         return updatedWorkspace;
-      }, "ワークスペースの更新に失敗しました");
+      }, 'ワークスペースの更新に失敗しました');
     },
-    [handleAsyncOperation]
+    [handleAsyncOperation, fetchWorkspaces]
   );
 
   // ワークスペース削除
   const deleteWorkspace = useCallback(
     async (id: string) => {
-      return handleAsyncOperation(
-        async () => {
-          await workspacesApi.deleteWorkspace(id);
-          setWorkspaces((prev) => prev.filter((workspace) => workspace.id !== id));
-        },
-        "ワークスペースの削除に失敗しました"
-      );
+      return handleAsyncOperation(async () => {
+        await workspacesApi.deleteWorkspace(id);
+        await fetchWorkspaces();
+      }, 'ワークスペースの削除に失敗しました');
     },
-    [handleAsyncOperation]
+    [handleAsyncOperation, fetchWorkspaces]
   );
 
   useEffect(() => {
