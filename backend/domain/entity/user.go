@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// User はユーザーを表すエンティティです
 type User struct {
 	ID           string
 	Name         string
@@ -14,7 +13,6 @@ type User struct {
 	UpdatedAt    time.Time
 }
 
-// NewUser はユーザーエンティティを生成します
 func NewUser(id, name, email string) *User {
 	now := time.Now()
 	return &User{
@@ -27,13 +25,11 @@ func NewUser(id, name, email string) *User {
 	}
 }
 
-// ChangeName はユーザー名を変更します
 func (u *User) ChangeName(name string) {
 	u.Name = name
 	u.UpdatedAt = time.Now()
 }
 
-// ChangeEmail はメールアドレスを変更します
 func (u *User) ChangeEmail(email string) {
 	u.Email = email
 	u.UpdatedAt = time.Now()

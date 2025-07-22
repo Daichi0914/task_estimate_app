@@ -24,13 +24,13 @@ func NewWorkspaceHandler(interactor *interactor.WorkspaceInteractor) *WorkspaceH
 // @Produce      json
 // @Param        workspace body dto.CreateWorkspaceInput true "ワークスペース作成情報"
 // @Success      201 {object} dto.WorkspaceOutput
-// @Failure      400 {string} string "invalid request body"
+// @Failure      400 {string} string "リクエストボディが無効です"
 // @Router       /workspaces [post]
 func (h *WorkspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
 	var input dto.CreateWorkspaceInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		handler.SendBadRequest("invalid request body")
+		handler.SendBadRequest("リクエストボディが無効です")
 		return
 	}
 	userID := r.Header.Get("X-USER-ID")
@@ -72,7 +72,7 @@ func (h *WorkspaceHandler) GetWorkspaces(w http.ResponseWriter, r *http.Request)
 // @Produce      json
 // @Param        id path string true "ワークスペースID"
 // @Success      200 {object} dto.WorkspaceOutput
-// @Failure      404 {string} string "workspace not found"
+// @Failure      404 {string} string "ワークスペースが見つかりません"
 // @Router       /workspaces/{id} [get]
 func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
@@ -84,7 +84,7 @@ func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	if ws == nil {
-		handler.SendNotFound("workspace not found")
+		handler.SendNotFound("ワークスペースが見つかりません")
 		return
 	}
 	handler.SendSuccess(http.StatusOK, ws)
@@ -97,7 +97,7 @@ func (h *WorkspaceHandler) GetWorkspace(w http.ResponseWriter, r *http.Request) 
 // @Param        id path string true "ワークスペースID"
 // @Param        workspace body dto.UpdateWorkspaceInput true "ワークスペース名"
 // @Success      204 {string} string "No Content"
-// @Failure      404 {string} string "workspace not found"
+// @Failure      404 {string} string "ワークスペースが見つかりません"
 // @Router       /workspaces/{id} [put]
 func (h *WorkspaceHandler) UpdateWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
@@ -105,12 +105,12 @@ func (h *WorkspaceHandler) UpdateWorkspace(w http.ResponseWriter, r *http.Reques
 	id := vars["id"]
 	var input dto.UpdateWorkspaceInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		handler.SendBadRequest("invalid request body")
+		handler.SendBadRequest("リクエストボディが無効です")
 		return
 	}
 	if err := h.WorkspaceInteractor.UpdateWorkspace(r.Context(), id, input.Name); err != nil {
 		if err.Error() == "workspace not found" {
-			handler.SendNotFound(err.Error())
+			handler.SendNotFound("ワークスペースが見つかりません")
 			return
 		}
 		handler.SendInternalServerError()
@@ -124,7 +124,7 @@ func (h *WorkspaceHandler) UpdateWorkspace(w http.ResponseWriter, r *http.Reques
 // @Produce      json
 // @Param        id path string true "ワークスペースID"
 // @Success      204 {string} string "No Content"
-// @Failure      404 {string} string "workspace not found"
+// @Failure      404 {string} string "ワークスペースが見つかりません"
 // @Router       /workspaces/{id} [delete]
 func (h *WorkspaceHandler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
@@ -132,7 +132,7 @@ func (h *WorkspaceHandler) DeleteWorkspace(w http.ResponseWriter, r *http.Reques
 	id := vars["id"]
 	if err := h.WorkspaceInteractor.DeleteWorkspace(r.Context(), id); err != nil {
 		if err.Error() == "workspace not found" {
-			handler.SendNotFound(err.Error())
+			handler.SendNotFound("ワークスペースが見つかりません")
 			return
 		}
 		handler.SendInternalServerError()
@@ -147,7 +147,7 @@ func (h *WorkspaceHandler) DeleteWorkspace(w http.ResponseWriter, r *http.Reques
 // @Produce      json
 // @Param        order body dto.WorkspaceOrderUpdateInput true "ワークスペース並び順"
 // @Success      204 {string} string "No Content"
-// @Failure      400 {string} string "invalid request body"
+// @Failure      400 {string} string "リクエストボディが無効です"
 // @Router       /workspaces/order [patch]
 func (h *WorkspaceHandler) UpdateWorkspaceOrder(w http.ResponseWriter, r *http.Request) {
 	handler := middleware.NewResponseHandler(w)
@@ -158,7 +158,7 @@ func (h *WorkspaceHandler) UpdateWorkspaceOrder(w http.ResponseWriter, r *http.R
 	}
 	var input dto.WorkspaceOrderUpdateInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		handler.SendBadRequest("invalid request body")
+		handler.SendBadRequest("リクエストボディが無効です")
 		return
 	}
 	if err := h.WorkspaceInteractor.UpdateWorkspaceOrder(r.Context(), userID, input.Orders); err != nil {

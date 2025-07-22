@@ -40,7 +40,7 @@ func NewUserHandler(userInteractor UserInteractorInterface, userRepo domainRepo.
 // @Produce      json
 // @Param        id path string true "ユーザーID"
 // @Success      200 {object} dto.UserOutput
-// @Failure      404 {string} string "user not found"
+// @Failure      404 {string} string "ユーザーが見つかりません"
 // @Router       /users/{id} [get]
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -55,7 +55,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		handler := middleware.NewResponseHandler(w)
 		if err == interactor.ErrUserNotFound {
-			handler.SendNotFound("user not found")
+			handler.SendNotFound("ユーザーが見つかりません")
 			return
 		}
 		handler.SendInternalServerError()
@@ -66,7 +66,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if output != nil {
 		output.Name = middleware.SanitizeString(output.Name)
 	}
-	
+
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -94,7 +94,7 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	
+
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -105,26 +105,26 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        user body dto.CreateUserInput true "ユーザー作成情報"
 // @Success      201 {object} dto.UserOutput
-// @Failure      400 {string} string "invalid request body or email already exists"
+// @Failure      400 {string} string "リクエストボディが無効です or メールアドレスは既に使用されています"
 // @Router       /users [post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var input dto.CreateUserInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		handler := middleware.NewResponseHandler(w)
-		handler.SendBadRequest("invalid request body")
+		handler.SendBadRequest("リクエストボディが無効です")
 		return
 	}
 
 	// 入力データの正規化
 	input.Name = middleware.SanitizeString(input.Name)
-	
+
 	ctx := r.Context()
 	output, err := h.userInteractor.CreateUser(ctx, &input)
 	if err != nil {
 		handler := middleware.NewResponseHandler(w)
 		// エラーの種類によって適切なステータスコードを返す
 		if err == services.ErrEmailAlreadyExists {
-			handler.SendBadRequest("email already exists")
+			handler.SendBadRequest("メールアドレスは既に使用されています")
 			return
 		}
 		handler.SendInternalServerError()
@@ -141,26 +141,26 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        login body dto.LoginRequestDTO true "ログイン情報"
 // @Success      200 {object} dto.LoginResponseDTO
-// @Failure      401 {string} string "invalid credentials"
+// @Failure      401 {string} string "メールアドレスまたはパスワードが正しくありません"
 // @Router       /login [post]
 func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Printf("[LoginHandler] JSON decode error: %v", err)
-		http.Error(w, "invalid request", http.StatusBadRequest)
+		http.Error(w, "リクエストが無効です", http.StatusBadRequest)
 		return
 	}
 	ctx := context.Background()
 	user, err := h.userService.Authenticate(ctx, req.Email, req.Password)
 	if err != nil {
 		log.Printf("[LoginHandler] Auth error: %v (email=%s)", err, req.Email)
-		http.Error(w, "invalid credentials", http.StatusUnauthorized)
+		http.Error(w, "メールアドレスまたはパスワードが正しくありません", http.StatusUnauthorized)
 		return
 	}
 	token, err := services.GenerateJWT(user.ID)
 	if err != nil {
 		log.Printf("[LoginHandler] JWT error: %v", err)
-		http.Error(w, "failed to generate token", http.StatusInternalServerError)
+		http.Error(w, "トークンの生成に失敗しました", http.StatusInternalServerError)
 		return
 	}
 	res := dto.LoginResponseDTO{Token: token, UserID: user.ID}
