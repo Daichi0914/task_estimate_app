@@ -4,9 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/google/uuid"
-
-	"task_estimate_app/backend/domain/entity"
 	"task_estimate_app/backend/domain/repository"
 	"task_estimate_app/backend/domain/services"
 	"task_estimate_app/backend/usecase/dto"
@@ -16,13 +13,11 @@ var (
 	ErrUserNotFound = errors.New("user not found")
 )
 
-// UserInteractor はユーザーに関するユースケースを実装します
 type UserInteractor struct {
 	userRepo    repository.UserRepository
 	userService services.UserServiceInterface
 }
 
-// NewUserInteractor はUserInteractorを生成します
 func NewUserInteractor(
 	userRepo repository.UserRepository,
 	userService services.UserServiceInterface,
@@ -33,7 +28,6 @@ func NewUserInteractor(
 	}
 }
 
-// GetUser はユーザー情報を取得します
 func (i *UserInteractor) GetUser(ctx context.Context, input *dto.GetUserInput) (*dto.UserOutput, error) {
 	// リポジトリからユーザーを取得
 	user, err := i.userRepo.FindByID(ctx, input.ID)
@@ -48,7 +42,6 @@ func (i *UserInteractor) GetUser(ctx context.Context, input *dto.GetUserInput) (
 	return dto.NewUserOutput(user), nil
 }
 
-// GetUsers はすべてのユーザー情報を取得します
 func (i *UserInteractor) GetUsers(ctx context.Context) (*dto.UsersOutput, error) {
 	// リポジトリからすべてのユーザーを取得
 	users, err := i.userRepo.FindAll(ctx)
@@ -60,19 +53,9 @@ func (i *UserInteractor) GetUsers(ctx context.Context) (*dto.UsersOutput, error)
 	return dto.NewUsersOutput(users), nil
 }
 
-// CreateUser は新規ユーザーを作成します
-func (i *UserInteractor) CreateUser(ctx context.Context, input *dto.CreateUserInput) (*dto.UserOutput, error) {
-	// メールアドレスの一意性を確認
-	if !i.userService.ValidateUniqueEmail(ctx, input.Email) {
-		return nil, services.ErrEmailAlreadyExists
-	}
-
-	// ユーザーエンティティを作成
-	userID := uuid.New().String()
-	user := entity.NewUser(userID, input.Name, input.Email)
-
-	// リポジトリに保存
-	err := i.userRepo.Create(ctx, user)
+func (i *UserInteractor) CreateAccount(ctx context.Context, input *dto.CreateAccountInput) (*dto.UserOutput, error) {
+	// ユーザーサービスを使用してアカウントを作成
+	user, err := i.userService.CreateAccount(ctx, input.Email, input.Password)
 	if err != nil {
 		return nil, err
 	}

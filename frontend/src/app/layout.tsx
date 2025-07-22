@@ -13,7 +13,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ja">
       <body>
         <AppProvider>
-          <AuthGuard>{children}</AuthGuard>
+          <AuthGuard>
+            {children}
+          </AuthGuard>
         </AppProvider>
       </body>
     </html>

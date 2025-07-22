@@ -60,8 +60,57 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.LoginResponseDTO"
                         }
                     },
+                    "400": {
+                        "description": "リクエストが無効です",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "401": {
-                        "description": "invalid credentials",
+                        "description": "メールアドレスまたはパスワードが正しくありません",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "トークンの生成に失敗しました",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "新しいアカウントを作成",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "アカウント作成",
+                "parameters": [
+                    {
+                        "description": "アカウント作成情報",
+                        "name": "account",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateAccountInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "リクエストボディが無効です or メールアドレスは既に使用されています",
                         "schema": {
                             "type": "string"
                         }
@@ -81,41 +130,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.UsersOutput"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "新しいユーザーを作成",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "ユーザー作成",
-                "parameters": [
-                    {
-                        "description": "ユーザー作成情報",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateUserInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.UserOutput"
-                        }
-                    },
-                    "400": {
-                        "description": "invalid request body or email already exists",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }
@@ -145,7 +159,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "user not found",
+                        "description": "ユーザーが見つかりません",
                         "schema": {
                             "type": "string"
                         }
@@ -197,7 +211,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "invalid request body",
+                        "description": "リクエストボディが無効です",
                         "schema": {
                             "type": "string"
                         }
@@ -234,7 +248,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "invalid request body",
+                        "description": "リクエストボディが無効です",
                         "schema": {
                             "type": "string"
                         }
@@ -266,7 +280,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "workspace not found",
+                        "description": "ワークスペースが見つかりません",
                         "schema": {
                             "type": "string"
                         }
@@ -308,7 +322,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "workspace not found",
+                        "description": "ワークスペースが見つかりません",
                         "schema": {
                             "type": "string"
                         }
@@ -338,7 +352,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "workspace not found",
+                        "description": "ワークスペースが見つかりません",
                         "schema": {
                             "type": "string"
                         }
@@ -348,13 +362,13 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CreateUserInput": {
+        "dto.CreateAccountInput": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "name": {
+                "password": {
                     "type": "string"
                 }
             }
@@ -410,9 +424,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "name": {
                     "type": "string"
                 },
                 "updated_at": {

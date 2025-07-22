@@ -6,6 +6,10 @@ export interface User {
   updated_at: string;
 }
 
+export interface UsersResponse {
+  users: User[];
+}
+
 export interface CreateUserRequest {
   name: string;
   email: string;

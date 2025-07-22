@@ -35,10 +35,10 @@ func (r *Router) Setup() *mux.Router {
 
 	// ユーザー関連のエンドポイント
 	api.HandleFunc("/users", r.userHandler.GetUsers).Methods(http.MethodGet, http.MethodOptions)
-	api.HandleFunc("/users", r.userHandler.CreateUser).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/users/{id}", r.userHandler.GetUser).Methods(http.MethodGet, http.MethodOptions)
 
-	// ログインエンドポイント
+	// 認証関連のエンドポイント
+	api.HandleFunc("/signup", r.userHandler.CreateAccount).Methods(http.MethodPost, http.MethodOptions)
 	api.HandleFunc("/login", r.userHandler.LoginHandler).Methods(http.MethodPost, http.MethodOptions)
 
 	// ワークスペース関連のエンドポイント

@@ -3,6 +3,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import LoadingWave from "@/components/ui/LoadingWave";
 
+const NO_AUTH_PAGES = ["/login", "/signup"];
+
 async function checkAuth(): Promise<boolean> {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
@@ -28,7 +30,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("user_id");
         if (!token || !userId) {
-          if (pathname !== "/login") router.replace("/login");
+          if (!NO_AUTH_PAGES.includes(pathname)) router.replace("/login");
           setChecking(false);
           return;
         }
@@ -37,7 +39,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("token");
           localStorage.removeItem("user_id");
           router.replace("/login");
-        } else if (pathname === "/login") {
+        } else if (NO_AUTH_PAGES.includes(pathname)) {
           router.replace("/");
         }
         setChecking(false);

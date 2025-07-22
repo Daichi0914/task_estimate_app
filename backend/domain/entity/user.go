@@ -6,31 +6,30 @@ import (
 
 type User struct {
 	ID           string
-	Name         string
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
 
-func NewUser(id, name, email string) *User {
-	now := time.Now()
-	return &User{
-		ID:           id,
-		Name:         name,
-		Email:        email,
-		PasswordHash: "",
-		CreatedAt:    now,
-		UpdatedAt:    now,
-	}
-}
-
-func (u *User) ChangeName(name string) {
-	u.Name = name
-	u.UpdatedAt = time.Now()
-}
-
 func (u *User) ChangeEmail(email string) {
 	u.Email = email
 	u.UpdatedAt = time.Now()
+}
+
+func (u *User) SetPasswordHash(passwordHash string) {
+	u.PasswordHash = passwordHash
+	u.UpdatedAt = time.Now()
+}
+
+// NewUserWithPassword はパスワード付きのユーザーエンティティを生成します
+func NewUserWithPassword(id, email, passwordHash string) *User {
+	now := time.Now()
+	return &User{
+		ID:           id,
+		Email:        email,
+		PasswordHash: passwordHash,
+		CreatedAt:    now,
+		UpdatedAt:    now,
+	}
 }

@@ -6,12 +6,9 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    const userId = typeof window !== 'undefined' ? localStorage.getItem("user_id") : null;
+    const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -21,20 +18,30 @@ class ApiClient {
       ...options,
     };
 
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorJson: { error?: string } | null = null;
+
+      try {
+        errorJson = JSON.parse(errorText);
+      } catch {
+        // 次のifで処理するので握り潰す
       }
-      if (response.status === 204) {
-        return null as T;
+
+      if (errorJson && errorJson.error) {
+        throw new Error(errorJson.error);
+      } else {
+        throw new Error(errorText);
       }
-      return await response.json();
-    } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
     }
+
+    if (response.status === 204) {
+      return null as T;
+    }
+
+    return response.json();
   }
 
   async get<T>(endpoint: string): Promise<T> {
@@ -67,4 +74,4 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(); 
+export const apiClient = new ApiClient();

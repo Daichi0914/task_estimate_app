@@ -18,7 +18,7 @@ import (
 type UserInteractorInterface interface {
 	GetUser(ctx context.Context, input *dto.GetUserInput) (*dto.UserOutput, error)
 	GetUsers(ctx context.Context) (*dto.UsersOutput, error)
-	CreateUser(ctx context.Context, input *dto.CreateUserInput) (*dto.UserOutput, error)
+	CreateAccount(ctx context.Context, input *dto.CreateAccountInput) (*dto.UserOutput, error)
 }
 
 type UserHandler struct {
@@ -62,11 +62,6 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 名前のUTF-8検証と正規化
-	if output != nil {
-		output.Name = middleware.SanitizeString(output.Name)
-	}
-
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
@@ -86,40 +81,28 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 各ユーザーの名前のUTF-8検証と正規化
-	if output != nil && output.Users != nil {
-		for _, user := range output.Users {
-			if user != nil {
-				user.Name = middleware.SanitizeString(user.Name)
-			}
-		}
-	}
-
 	handler := middleware.NewResponseHandler(w)
 	handler.SendSuccess(http.StatusOK, output)
 }
 
-// @Summary      ユーザー作成
-// @Description  新しいユーザーを作成
+// @Summary      アカウント作成
+// @Description  新しいアカウントを作成
 // @Accept       json
 // @Produce      json
-// @Param        user body dto.CreateUserInput true "ユーザー作成情報"
+// @Param        account body dto.CreateAccountInput true "アカウント作成情報"
 // @Success      201 {object} dto.UserOutput
 // @Failure      400 {string} string "リクエストボディが無効です or メールアドレスは既に使用されています"
-// @Router       /users [post]
-func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var input dto.CreateUserInput
+// @Router       /signup [post]
+func (h *UserHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
+	var input dto.CreateAccountInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		handler := middleware.NewResponseHandler(w)
 		handler.SendBadRequest("リクエストボディが無効です")
 		return
 	}
 
-	// 入力データの正規化
-	input.Name = middleware.SanitizeString(input.Name)
-
 	ctx := r.Context()
-	output, err := h.userInteractor.CreateUser(ctx, &input)
+	output, err := h.userInteractor.CreateAccount(ctx, &input)
 	if err != nil {
 		handler := middleware.NewResponseHandler(w)
 		// エラーの種類によって適切なステータスコードを返す
@@ -141,31 +124,38 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        login body dto.LoginRequestDTO true "ログイン情報"
 // @Success      200 {object} dto.LoginResponseDTO
+// @Failure      400 {string} string "リクエストが無効です"
 // @Failure      401 {string} string "メールアドレスまたはパスワードが正しくありません"
+// @Failure      500 {string} string "トークンの生成に失敗しました"
 // @Router       /login [post]
 func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequestDTO
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Printf("[LoginHandler] JSON decode error: %v", err)
-		http.Error(w, "リクエストが無効です", http.StatusBadRequest)
+		handler := middleware.NewResponseHandler(w)
+		handler.SendBadRequest("リクエストが無効です")
 		return
 	}
 	ctx := context.Background()
 	user, err := h.userService.Authenticate(ctx, req.Email, req.Password)
 	if err != nil {
 		log.Printf("[LoginHandler] Auth error: %v (email=%s)", err, req.Email)
-		http.Error(w, "メールアドレスまたはパスワードが正しくありません", http.StatusUnauthorized)
+		handler := middleware.NewResponseHandler(w)
+		if err == services.ErrUserNotFound {
+			handler.SendError(http.StatusUnauthorized, "ユーザーが存在しません")
+			return
+		}
+		handler.SendError(http.StatusUnauthorized, "メールアドレスまたはパスワードが正しくありません")
 		return
 	}
 	token, err := services.GenerateJWT(user.ID)
 	if err != nil {
 		log.Printf("[LoginHandler] JWT error: %v", err)
-		http.Error(w, "トークンの生成に失敗しました", http.StatusInternalServerError)
+		handler := middleware.NewResponseHandler(w)
+		handler.SendInternalServerError()
 		return
 	}
 	res := dto.LoginResponseDTO{Token: token, UserID: user.ID}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		log.Printf("[LoginHandler] Response encode error: %v", err)
-	}
+	handler := middleware.NewResponseHandler(w)
+	handler.SendSuccess(http.StatusOK, res)
 }

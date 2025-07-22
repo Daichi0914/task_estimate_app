@@ -1,10 +1,10 @@
 basePath: /api/v1
 definitions:
-  dto.CreateUserInput:
+  dto.CreateAccountInput:
     properties:
       email:
         type: string
-      name:
+      password:
         type: string
     type: object
   dto.CreateWorkspaceInput:
@@ -40,8 +40,6 @@ definitions:
       email:
         type: string
       id:
-        type: string
-      name:
         type: string
       updated_at:
         type: string
@@ -118,11 +116,43 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: リクエストが無効です
+          schema:
+            type: string
         "401":
-          description: invalid credentials
+          description: メールアドレスまたはパスワードが正しくありません
+          schema:
+            type: string
+        "500":
+          description: トークンの生成に失敗しました
           schema:
             type: string
       summary: ログイン
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: 新しいアカウントを作成
+      parameters:
+      - description: アカウント作成情報
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAccountInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.UserOutput'
+        "400":
+          description: リクエストボディが無効です or メールアドレスは既に使用されています
+          schema:
+            type: string
+      summary: アカウント作成
   /users:
     get:
       description: 全ユーザーの一覧を取得
@@ -134,29 +164,6 @@ paths:
           schema:
             $ref: '#/definitions/dto.UsersOutput'
       summary: ユーザー一覧取得
-    post:
-      consumes:
-      - application/json
-      description: 新しいユーザーを作成
-      parameters:
-      - description: ユーザー作成情報
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateUserInput'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.UserOutput'
-        "400":
-          description: invalid request body or email already exists
-          schema:
-            type: string
-      summary: ユーザー作成
   /users/{id}:
     get:
       description: 指定したIDのユーザー情報を取得
@@ -174,7 +181,7 @@ paths:
           schema:
             $ref: '#/definitions/dto.UserOutput'
         "404":
-          description: user not found
+          description: ユーザーが見つかりません
           schema:
             type: string
       summary: ユーザー取得
@@ -208,7 +215,7 @@ paths:
           schema:
             $ref: '#/definitions/dto.WorkspaceOutput'
         "400":
-          description: invalid request body
+          description: リクエストボディが無効です
           schema:
             type: string
       summary: ワークスペース作成
@@ -229,7 +236,7 @@ paths:
           schema:
             type: string
         "404":
-          description: workspace not found
+          description: ワークスペースが見つかりません
           schema:
             type: string
       summary: ワークスペース削除
@@ -249,7 +256,7 @@ paths:
           schema:
             $ref: '#/definitions/dto.WorkspaceOutput'
         "404":
-          description: workspace not found
+          description: ワークスペースが見つかりません
           schema:
             type: string
       summary: ワークスペース取得
@@ -277,7 +284,7 @@ paths:
           schema:
             type: string
         "404":
-          description: workspace not found
+          description: ワークスペースが見つかりません
           schema:
             type: string
       summary: ワークスペース更新
@@ -301,7 +308,7 @@ paths:
           schema:
             type: string
         "400":
-          description: invalid request body
+          description: リクエストボディが無効です
           schema:
             type: string
       summary: ワークスペース並び順保存

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { workspacesApi } from '@/lib/api';
+import { workspacesApi } from '@/lib/api/workspaces';
 import { CreateWorkspaceRequest, UpdateWorkspaceRequest } from '@/types/workspace';
 import { useAtom, useSetAtom } from 'jotai';
 import { workspacesAtom } from '@/jotai/atoms/workspaceAtom';
