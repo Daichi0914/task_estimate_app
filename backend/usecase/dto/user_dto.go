@@ -31,20 +31,6 @@ func NewUserOutput(user *entity.User) *UserOutput {
 	}
 }
 
-type UsersOutput struct {
-	Users []*UserOutput `json:"users"`
-}
-
-func NewUsersOutput(users []*entity.User) *UsersOutput {
-	userOutputs := make([]*UserOutput, len(users))
-	for i, user := range users {
-		userOutputs[i] = NewUserOutput(user)
-	}
-	return &UsersOutput{
-		Users: userOutputs,
-	}
-}
-
 type LoginRequestDTO struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`

@@ -32,27 +32,6 @@ func (r *WorkspaceRepository) FindByID(ctx context.Context, id string) (*entity.
 	return &ws, nil
 }
 
-func (r *WorkspaceRepository) FindAll(ctx context.Context) ([]*entity.Workspace, error) {
-	rows, err := r.DB.QueryContext(ctx, `SELECT id, name FROM workspaces`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var workspaces []*entity.Workspace
-	for rows.Next() {
-		var ws entity.Workspace
-		if err := rows.Scan(&ws.ID, &ws.Name); err != nil {
-			return nil, err
-		}
-		workspaces = append(workspaces, &ws)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return workspaces, nil
-}
-
 func (r *WorkspaceRepository) Update(ctx context.Context, workspace *entity.Workspace) error {
 	_, err := r.DB.ExecContext(ctx, `UPDATE workspaces SET name = ? WHERE id = ?`, workspace.Name, workspace.ID)
 	return err

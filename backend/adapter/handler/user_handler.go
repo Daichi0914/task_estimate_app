@@ -17,7 +17,6 @@ import (
 
 type UserInteractorInterface interface {
 	GetUser(ctx context.Context, input *dto.GetUserInput) (*dto.UserOutput, error)
-	GetUsers(ctx context.Context) (*dto.UsersOutput, error)
 	CreateAccount(ctx context.Context, input *dto.CreateAccountInput) (*dto.UserOutput, error)
 }
 
@@ -58,25 +57,6 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 			handler.SendNotFound("ユーザーが見つかりません")
 			return
 		}
-		handler.SendInternalServerError()
-		return
-	}
-
-	handler := middleware.NewResponseHandler(w)
-	handler.SendSuccess(http.StatusOK, output)
-}
-
-// @Summary      ユーザー一覧取得
-// @Description  全ユーザーの一覧を取得
-// @Produce      json
-// @Success      200 {object} dto.UsersOutput
-// @Router       /users [get]
-func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	output, err := h.userInteractor.GetUsers(ctx)
-	if err != nil {
-		handler := middleware.NewResponseHandler(w)
 		handler.SendInternalServerError()
 		return
 	}

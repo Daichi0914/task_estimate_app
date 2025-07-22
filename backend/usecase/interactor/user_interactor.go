@@ -42,17 +42,6 @@ func (i *UserInteractor) GetUser(ctx context.Context, input *dto.GetUserInput) (
 	return dto.NewUserOutput(user), nil
 }
 
-func (i *UserInteractor) GetUsers(ctx context.Context) (*dto.UsersOutput, error) {
-	// リポジトリからすべてのユーザーを取得
-	users, err := i.userRepo.FindAll(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// ドメインオブジェクトをDTOに変換して返却
-	return dto.NewUsersOutput(users), nil
-}
-
 func (i *UserInteractor) CreateAccount(ctx context.Context, input *dto.CreateAccountInput) (*dto.UserOutput, error) {
 	// ユーザーサービスを使用してアカウントを作成
 	user, err := i.userService.CreateAccount(ctx, input.Email, input.Password)

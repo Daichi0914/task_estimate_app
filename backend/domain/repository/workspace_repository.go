@@ -9,7 +9,6 @@ import (
 type WorkspaceRepository interface {
 	Create(ctx context.Context, workspace *entity.Workspace) error
 	FindByID(ctx context.Context, id string) (*entity.Workspace, error)
-	FindAll(ctx context.Context) ([]*entity.Workspace, error)
 	FindByUserID(ctx context.Context, userID string) ([]*entity.Workspace, error)
 	FindByNameAndUserID(ctx context.Context, name, userID string) (*entity.Workspace, error)
 	Update(ctx context.Context, workspace *entity.Workspace) error

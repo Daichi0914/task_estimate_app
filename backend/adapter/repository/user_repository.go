@@ -68,38 +68,6 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*entity
 	return &user, nil
 }
 
-func (r *UserRepository) FindAll(ctx context.Context) ([]*entity.User, error) {
-	query := "SELECT id, email, password_hash, created_at, updated_at FROM users ORDER BY created_at DESC"
-
-	rows, err := r.db.QueryContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var users []*entity.User
-	for rows.Next() {
-		var user entity.User
-		err := rows.Scan(
-			&user.ID,
-			&user.Email,
-			&user.PasswordHash,
-			&user.CreatedAt,
-			&user.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, &user)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
-
 func (r *UserRepository) Create(ctx context.Context, user *entity.User) error {
 	// IDのバリデーション
 	if user.ID == "" {

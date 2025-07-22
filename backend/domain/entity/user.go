@@ -12,16 +12,6 @@ type User struct {
 	UpdatedAt    time.Time
 }
 
-func (u *User) ChangeEmail(email string) {
-	u.Email = email
-	u.UpdatedAt = time.Now()
-}
-
-func (u *User) SetPasswordHash(passwordHash string) {
-	u.PasswordHash = passwordHash
-	u.UpdatedAt = time.Now()
-}
-
 // NewUserWithPassword はパスワード付きのユーザーエンティティを生成します
 func NewUserWithPassword(id, email, passwordHash string) *User {
 	now := time.Now()
