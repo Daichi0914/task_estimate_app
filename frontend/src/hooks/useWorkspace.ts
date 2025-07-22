@@ -1,44 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { workspacesApi } from '@/lib/api/workspaces';
 import { CreateWorkspaceRequest, UpdateWorkspaceRequest } from '@/types/workspace';
 import { useAtom, useSetAtom } from 'jotai';
 import { workspacesAtom } from '@/jotai/atoms/workspaceAtom';
+import { useAsyncOperation } from './useAsyncOperation';
 
 export const useWorkspace = () => {
   const [workspaces] = useAtom(workspacesAtom);
   const setWorkspacesOnly = useSetAtom(workspacesAtom);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  const handleAsyncOperation = useCallback(
-    async <T>(operation: () => Promise<T>, errorMessage: string): Promise<T> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const result = await operation();
-        return result;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : errorMessage;
-        setError(message);
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+  const { loading: isLoading, error, clearError, handleAsyncOperation } = useAsyncOperation();
 
   const fetchWorkspaces = useCallback(async () => {
     return handleAsyncOperation(async () => {
       const response = await workspacesApi.getWorkspaces();
       setWorkspacesOnly(response.data);
       return response.data;
-    }, 'ワークスペース一覧の取得に失敗しました');
+    });
   }, [handleAsyncOperation, setWorkspacesOnly]);
 
   const createWorkspace = useCallback(
@@ -47,7 +24,7 @@ export const useWorkspace = () => {
         const newWorkspace = await workspacesApi.createWorkspace(data);
         await fetchWorkspaces();
         return newWorkspace;
-      }, 'ワークスペースの作成に失敗しました');
+      });
     },
     [handleAsyncOperation, fetchWorkspaces]
   );
@@ -58,7 +35,7 @@ export const useWorkspace = () => {
         const updatedWorkspace = await workspacesApi.updateWorkspace(id, data);
         await fetchWorkspaces();
         return updatedWorkspace;
-      }, 'ワークスペースの更新に失敗しました');
+      });
     },
     [handleAsyncOperation, fetchWorkspaces]
   );
@@ -68,7 +45,7 @@ export const useWorkspace = () => {
       return handleAsyncOperation(async () => {
         await workspacesApi.deleteWorkspace(id);
         await fetchWorkspaces();
-      }, 'ワークスペースの削除に失敗しました');
+      });
     },
     [handleAsyncOperation, fetchWorkspaces]
   );
@@ -90,6 +67,6 @@ export const useWorkspace = () => {
     createWorkspace,
     updateWorkspace,
     deleteWorkspace,
-    saveWorkspaceOrder, // 追加
+    saveWorkspaceOrder,
   };
 };

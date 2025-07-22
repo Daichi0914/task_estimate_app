@@ -13,7 +13,6 @@ var (
 	ErrDBError = errors.New("database error")
 )
 
-// UserRepository はユーザーのリポジトリ実装です
 type UserRepository struct {
 	db *sql.DB
 }
