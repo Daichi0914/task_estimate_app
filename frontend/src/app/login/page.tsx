@@ -20,7 +20,12 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       if (!res.ok) {
-        setError("ログインに失敗しました");
+        const errorText = await res.text();
+        if (res.status === 401 && errorText) {
+          setError(errorText);
+        } else {
+          setError("ログインに失敗しました");
+        }
         setLoading(false);
         return;
       }
@@ -53,7 +58,7 @@ export default function LoginPage() {
             autoFocus
           />
         </div>
-        <div className="mb-6">
+        <div>
           <label className="block mb-1">パスワード</label>
           <input
             type="password"
@@ -63,10 +68,10 @@ export default function LoginPage() {
             required
           />
         </div>
-        {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
+        <div className="h-4 text-xs mt-2 text-red-500">{error}</div>
         <button
           type="submit"
-          className="w-full bg-black text-white py-2 rounded hover:bg-gray-700 disabled:opacity-50"
+          className="w-full bg-black text-white mt-6 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "ログイン中..." : "ログイン"}
@@ -75,4 +80,3 @@ export default function LoginPage() {
     </div>
   );
 }
- 
