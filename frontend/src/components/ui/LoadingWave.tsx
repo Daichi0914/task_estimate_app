@@ -9,7 +9,7 @@ const LoadingWave = () => (
         <span
           key={i}
           className="animate-wave"
-          style={{ animationDelay: `${i * 0.1}s` }}
+          style={{ animationDelay: `${i * 0.05}s` }}
         >
           {char}
         </span>

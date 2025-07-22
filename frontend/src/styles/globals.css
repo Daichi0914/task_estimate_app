@@ -5,10 +5,10 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @keyframes wave {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-0.3em); }
+  0%, 50%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-0.5em); }
 }
 .animate-wave {
-  animation: wave .3s infinite;
+  animation: wave .8s infinite linear;
   display: inline-block;
 }
