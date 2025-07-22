@@ -63,8 +63,13 @@ func (r *WorkspaceRepository) Delete(ctx context.Context, id string) error {
 	return err
 }
 
-func (r *WorkspaceRepository) FindByName(ctx context.Context, name string) (*entity.Workspace, error) {
-	row := r.DB.QueryRowContext(ctx, `SELECT id, name FROM workspaces WHERE name = ?`, name)
+func (r *WorkspaceRepository) FindByNameAndUserID(ctx context.Context, name, userID string) (*entity.Workspace, error) {
+	row := r.DB.QueryRowContext(ctx, `
+		SELECT w.id, w.name
+		FROM workspaces w
+		JOIN user_workspaces uw ON w.id = uw.workspace_id
+		WHERE w.name = ? AND uw.user_id = ?
+	`, name, userID)
 	var ws entity.Workspace
 	if err := row.Scan(&ws.ID, &ws.Name); err != nil {
 		if err == sql.ErrNoRows {

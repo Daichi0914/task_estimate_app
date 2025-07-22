@@ -13,8 +13,8 @@ func NewWorkspaceService(repo repository.WorkspaceRepository) *WorkspaceService 
 	return &WorkspaceService{Repo: repo}
 }
 
-func (s *WorkspaceService) IsNameUnique(ctx context.Context, name string) (bool, error) {
-	ws, err := s.Repo.FindByName(ctx, name)
+func (s *WorkspaceService) IsNameUniqueForUser(ctx context.Context, name, userID string) (bool, error) {
+	ws, err := s.Repo.FindByNameAndUserID(ctx, name, userID)
 	if err != nil {
 		return false, err
 	}

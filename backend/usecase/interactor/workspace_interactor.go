@@ -21,7 +21,7 @@ func NewWorkspaceInteractor(repo repository.WorkspaceRepository, service *servic
 }
 
 func (i *WorkspaceInteractor) CreateWorkspace(ctx context.Context, input *dto.CreateWorkspaceInput) (*dto.WorkspaceOutput, error) {
-	unique, err := i.WorkspaceService.IsNameUnique(ctx, input.Name)
+	unique, err := i.WorkspaceService.IsNameUniqueForUser(ctx, input.Name, input.UserID)
 	if err != nil {
 		return nil, err
 	}
