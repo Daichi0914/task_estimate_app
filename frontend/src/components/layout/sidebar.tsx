@@ -6,6 +6,7 @@ import CreateWorkspaceForm from '../workspace/createWorkspaceForm';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import type { DragEndEvent } from '@dnd-kit/core';
 import WorkspaceListItem from '../workspace/workspaceListItem';
 import debounce from 'lodash.debounce';
@@ -44,7 +45,12 @@ export const WorkspaceSidebar: FC = () => {
     if (!localWorkspaces || localWorkspaces.length === 0) return <p>ワークスペースがありません</p>;
 
     return (
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext 
+        sensors={sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis]}
+      >
         <SortableContext
           items={localWorkspaces.map((w) => w.id)}
           strategy={verticalListSortingStrategy}
