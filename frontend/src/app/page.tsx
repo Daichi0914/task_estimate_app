@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <Layout>
       <div>
-        <h1>ホーム</h1>
+        <h1>ワークスペースを作成してください</h1>
       </div>
     </Layout>
   );

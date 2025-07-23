@@ -15,7 +15,7 @@ export const settingsStyles = {
     field: '',
     label: 'block text-sm font-medium text-gray-700 mb-2',
     input: 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-    button: 'bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors',
+    button: 'bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer',
   },
   toggle: {
     container: 'flex items-center justify-between',

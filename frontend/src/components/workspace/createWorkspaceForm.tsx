@@ -23,7 +23,7 @@ const CreateWorkspaceForm = () => {
 
   return (
     <form
-      className="absolute bottom-0 left-0 right-0 h-[124px] mx-4 my-6 flex flex-col justify-end border-t-1 border-gray-300"
+      className="absolute bottom-0 left-0 right-0 h-[140px] p-4 flex flex-col justify-end border-t-1 border-gray-300 bg-white"
       onSubmit={handleSubmit}
     >
       <input
@@ -35,10 +35,8 @@ const CreateWorkspaceForm = () => {
         onChange={(e) => setValue(e.target.value)}
         disabled={isLoading}
       />
-      {(localError || error) && (
-        <div className="text-red-500 text-sm mt-1">{localError || error}</div>
-      )}
-      <div className="flex justify-between gap-4 mt-4">
+      <div className="h-4 text-red-500 text-xs mt-1">{localError || error}</div>
+      <div className="flex justify-between gap-4 mt-1">
         <button
           type="submit"
           className="w-full p-1 bg-black hover:bg-gray-700 text-white rounded-lg transition-colors cursor-pointer"

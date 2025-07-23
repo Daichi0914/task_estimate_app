@@ -60,13 +60,13 @@ export const WorkspaceSidebar: FC = () => {
   };
 
   return (
-    <div className="w-80 h-full pt-16 bg-white border-r border-gray-200 shadow-sm">
-      <div className="h-full p-4">
-        <div className="flex items-center justify-between mb-6">
+    <div className="w-80 h-screen pt-16 bg-white border-r border-gray-200 shadow-sm">
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">ワークスペース</h2>
           <button
             onClick={toggle}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             aria-label="サイドバーを閉じる"
           >
             <svg
@@ -84,7 +84,7 @@ export const WorkspaceSidebar: FC = () => {
             </svg>
           </button>
         </div>
-        <div className="h-[calc(100% - 124px)] scroll-auto">{renderContent()}</div>
+        <div className="h-full overflow-y-auto hidden-scrollbar px-4 py-2 mb-[140px]">{renderContent()}</div>
         <CreateWorkspaceForm />
       </div>
     </div>

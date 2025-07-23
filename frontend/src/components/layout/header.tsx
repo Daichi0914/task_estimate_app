@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FolderIcon, UserIcon } from '@/components/ui/icons';
+import { FolderIcon, SettingsIcon } from '@/components/ui/icons';
 import { useSidebar } from '@/hooks/useSidebar';
 import { headerStyles } from '@/styles/components/header';
 import { layoutStyles } from '@/styles/components/layout';
@@ -41,16 +41,16 @@ export const Header: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className={headerStyles.logo.text}>TaskEstimate</span>
+            <span className={headerStyles.logo.text}>タスク管理</span>
           </button>
         </div>
         
         <button
           onClick={handleUserIconClick}
           className={buttonStyles.rounded}
-          aria-label="ユーザー設定"
+          aria-label="設定"
         >
-          <UserIcon />
+          <SettingsIcon />
         </button>
       </div>
     </header>

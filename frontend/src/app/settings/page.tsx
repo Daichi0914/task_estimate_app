@@ -37,7 +37,7 @@ export default function SettingsPage() {
     <Layout>
       <div className={settingsStyles.container}>
         <div className={settingsStyles.header.container}>
-          <h1 className={settingsStyles.header.title}>ユーザー設定</h1>
+          <h1 className={settingsStyles.header.title}>設定</h1>
           <p className={settingsStyles.header.description}>
             アカウント情報やアプリケーションの設定を管理できます
           </p>
@@ -45,18 +45,8 @@ export default function SettingsPage() {
 
         <div className={settingsStyles.grid}>
           <Card className={settingsStyles.card}>
-            <h2 className={settingsStyles.section.title}>プロフィール</h2>
+            <h2 className={settingsStyles.section.title}>ユーザー設定</h2>
             <div className={settingsStyles.section.content}>
-              <div>
-                <label className={settingsStyles.form.label}>
-                  ユーザー名
-                </label>
-                <input
-                  type="text"
-                  className={settingsStyles.form.input}
-                  placeholder="ユーザー名を入力"
-                />
-              </div>
               <div>
                 <label className={settingsStyles.form.label}>
                   メールアドレス
@@ -73,7 +63,7 @@ export default function SettingsPage() {
             </div>
           </Card>
 
-          <Card className={settingsStyles.card}>
+          {/* <Card className={settingsStyles.card}>
             <h2 className={settingsStyles.section.title}>アプリケーション設定</h2>
             <div className={settingsStyles.section.content}>
               <div className={settingsStyles.toggle.container}>
@@ -101,7 +91,7 @@ export default function SettingsPage() {
                 </button>
               </div>
             </div>
-          </Card>
+          </Card> */}
 
           <Card className={settingsStyles.card}>
             <h2 className={settingsStyles.section.title}>アカウント管理</h2>
