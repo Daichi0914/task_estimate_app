@@ -2,7 +2,7 @@
 
 const waveText = "ロード中...";
 
-const LoadingWave = () => (
+export const LoadingWave = () => (
   <div className="flex min-h-screen items-center justify-center">
     <span className="flex text-2xl font-bold">
       {waveText.split("").map((char, i) => (
@@ -17,5 +17,3 @@ const LoadingWave = () => (
     </span>
   </div>
 );
-
-export default LoadingWave;

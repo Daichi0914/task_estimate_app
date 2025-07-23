@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import LoadingWave from "@/components/ui/LoadingWave";
+import { LoadingWave } from "@/components/ui/LoadingWave";
 
 const NO_AUTH_PAGES = ["/login", "/signup"];
 
@@ -19,7 +19,7 @@ async function checkAuth(): Promise<boolean> {
   }
 }
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
+export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [checking, setChecking] = useState(true);
@@ -48,4 +48,4 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [pathname, router]);
 
   return checking ? <LoadingWave /> : <>{children}</>;
-}
+};

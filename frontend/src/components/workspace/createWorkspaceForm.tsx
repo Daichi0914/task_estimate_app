@@ -1,7 +1,7 @@
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { useState } from "react";
 
-const CreateWorkspaceForm = () => {
+export const CreateWorkspaceForm = () => {
   const [value, setValue] = useState('');
   const { createWorkspace, error, isLoading } = useWorkspace();
   const [localError, setLocalError] = useState<string | null>(null);
@@ -48,5 +48,3 @@ const CreateWorkspaceForm = () => {
     </form>
   );
 };
-
-export default CreateWorkspaceForm;

@@ -1,7 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
-import clsx from 'clsx';
 import { Layout } from '@/components/layout/layout';
 import { Card } from '@/components/ui/card';
 import { settingsStyles } from '@/styles/components/settings';
@@ -9,24 +7,6 @@ import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(true);
-
-  const toggleSwitchClasses = (isOn: boolean) => clsx(
-    settingsStyles.toggle.switch.base,
-    {
-      [settingsStyles.toggle.switch.on]: isOn,
-      [settingsStyles.toggle.switch.off]: !isOn,
-    }
-  );
-
-  const thumbClasses = (isOn: boolean) => clsx(
-    settingsStyles.toggle.switch.thumb,
-    {
-      [settingsStyles.toggle.switch.thumbOn]: isOn,
-      [settingsStyles.toggle.switch.thumbOff]: !isOn,
-    }
-  );
 
   const handleLogout = () => {
     localStorage.removeItem("token");

@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
-import AppProvider from '@/provider/AppProvider';
 import { ReactNode } from 'react';
-import AuthGuard from "@/components/auth/AuthGuard";
+import { AppProvider } from '@/provider/AppProvider';
+import { AuthGuard } from "@/components/auth/AuthGuard";
 
 export const metadata = {
   title: 'Task Timer',

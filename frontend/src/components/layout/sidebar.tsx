@@ -2,18 +2,20 @@
 
 import { FC, useEffect, useState } from 'react';
 import { useSidebar } from '@/hooks/useSidebar';
-import CreateWorkspaceForm from '../workspace/createWorkspaceForm';
+import { CreateWorkspaceForm } from '../workspace/createWorkspaceForm';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useSelectedWorkspace } from '@/hooks/useSelectedWorkspace';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import type { DragEndEvent } from '@dnd-kit/core';
-import WorkspaceListItem from '../workspace/workspaceListItem';
+import { WorkspaceListItem } from '../workspace/workspaceListItem';
 import debounce from 'lodash.debounce';
 
 export const WorkspaceSidebar: FC = () => {
   const { toggle } = useSidebar();
   const { workspaces, isLoading, saveWorkspaceOrder } = useWorkspace();
+  const { selectedWorkspaceId, selectWorkspace } = useSelectedWorkspace();
   const [localWorkspaces, setLocalWorkspaces] = useState(workspaces);
 
   useEffect(() => {
@@ -56,7 +58,12 @@ export const WorkspaceSidebar: FC = () => {
           strategy={verticalListSortingStrategy}
         >
           {localWorkspaces.map((workspace) => (
-            <WorkspaceListItem key={workspace.id} id={workspace.id}>
+            <WorkspaceListItem 
+              key={workspace.id} 
+              id={workspace.id}
+              isSelected={workspace.id === selectedWorkspaceId}
+              onClick={() => selectWorkspace(workspace.id)}
+            >
               {workspace.name}
             </WorkspaceListItem>
           ))}
