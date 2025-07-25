@@ -7,7 +7,7 @@ export const layoutStyles = {
     closed: '-translate-x-full',
   },
   main: {
-    base: 'transition-all duration-300 ease-in-out mt-16 p-6 flex-1',
+    base: 'transition-all duration-300 ease-in-out mt-16 p-6 flex-1 h-[calc(100vh-64px)]',
     withSidebar: 'ml-80',
     withoutSidebar: 'ml-0',
   },

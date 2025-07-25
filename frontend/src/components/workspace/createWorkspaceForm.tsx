@@ -23,7 +23,7 @@ export const CreateWorkspaceForm = () => {
 
   return (
     <form
-      className="absolute bottom-0 left-0 right-0 h-[140px] p-4 flex flex-col justify-end border-t-1 border-gray-300 bg-white"
+      className="absolute bottom-0 left-0 right-0 h-[140px] p-4 flex flex-col justify-end border-t-1 border-gray-200 bg-white"
       onSubmit={handleSubmit}
     >
       <input
