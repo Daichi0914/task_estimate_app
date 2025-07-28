@@ -21,66 +21,69 @@ export const KanbanBoard: FC = () => {
     const { active, over } = event;
     setActiveTask(null);
 
-    console.log('DragEnd event:', { active: active.id, over: over?.id });
-
     if (!over) {
-      console.log('No over target');
       return;
     }
-
-    // タスクIDからタスク情報を取得
-    const taskId = active.id as string;
-    const overId = over.id as string;
 
     // 同じタスクにドロップした場合は何もしない
     if (active.id === over.id) {
-      console.log('Same task dropped on itself');
       return;
     }
 
+    const taskId = active.id as string;
+    const overId = over.id as string;
+
     // ドロップ先がカラムかタスクかを判定
     const isOverColumn = overId.includes('column-');
-    const isOverTask = !isOverColumn;
 
     if (isOverColumn) {
-      // カラム間の移動（カラムの空の部分にドロップ）
+      // カラムの空の部分にドロップ
       const newStatus = getStatusFromContainerId(overId);
-      console.log('Moving to column (empty area):', newStatus, 'for container:', overId);
-      
       if (newStatus) {
         // カラムの最後に追加
         const sameStatusTasks = tasks.filter(t => t.status === newStatus).sort((a, b) => a.order - b.order);
         const maxOrder = sameStatusTasks.length > 0 ? Math.max(...sameStatusTasks.map(t => t.order)) : 0;
         updateTask(taskId, { status: newStatus, order: maxOrder + 1 });
       }
-    } else if (isOverTask) {
-      // 同一カラム内での並べ替え
-      const activeTask = tasks.find(t => t.id === active.id);
+    } else {
+      // タスクにドロップ
       const overTask = tasks.find(t => t.id === over.id);
-      
-      console.log('Over task detected:', { activeTask, overTask });
-      
-      if (activeTask && overTask) {
-        console.log('Reordering within same column:', activeTask.status, 'vs', overTask.status);
+      if (overTask) {
+        const activeTask = tasks.find(t => t.id === active.id);
         
-        // 同じカラム内での並べ替えの場合
-        if (activeTask.status === overTask.status) {
-          console.log('Same column reordering');
-          // タスクの順序を更新
-          const activeIndex = tasks.findIndex(t => t.id === active.id);
-          const overIndex = tasks.findIndex(t => t.id === over.id);
-          
-          console.log('Indexes:', { activeIndex, overIndex });
+        if (activeTask && activeTask.status === overTask.status) {
+          // 同じカラム内での並べ替え
+          const sameStatusTasks = tasks.filter(t => t.status === overTask.status).sort((a, b) => a.order - b.order);
+          const activeIndex = sameStatusTasks.findIndex(t => t.id === active.id);
+          const overIndex = sameStatusTasks.findIndex(t => t.id === over.id);
           
           // 新しい順序を計算
-          const newOrder = calculateNewOrder(tasks, activeIndex, overIndex, activeTask.status);
-          console.log('New order:', newOrder);
+          let newOrder: number;
+          if (activeIndex < overIndex) {
+            // 下に移動する場合
+            if (overIndex === sameStatusTasks.length - 1) {
+              // 最後のタスクの後
+              newOrder = overTask.order + 1;
+            } else {
+              // 中間に挿入
+              const nextTask = sameStatusTasks[overIndex + 1];
+              newOrder = (overTask.order + nextTask.order) / 2;
+            }
+          } else {
+            // 上に移動する場合
+            if (overIndex === 0) {
+              // 最初のタスクの前
+              newOrder = overTask.order - 1;
+            } else {
+              // 中間に挿入
+              const prevTask = sameStatusTasks[overIndex - 1];
+              newOrder = (prevTask.order + overTask.order) / 2;
+            }
+          }
           
-          // タスクの順序を更新
           updateTask(taskId, { order: newOrder });
         } else {
-          console.log('Different column moving');
-          // 異なるカラム間の移動（タスクの前後に挿入）
+          // 異なるカラム間の移動
           const targetStatus = overTask.status;
           const sameStatusTasks = tasks.filter(t => t.status === targetStatus).sort((a, b) => a.order - b.order);
           const overTaskIndex = sameStatusTasks.findIndex(t => t.id === overTask.id);
@@ -99,52 +102,13 @@ export const KanbanBoard: FC = () => {
             newOrder = (prevTask.order + overTask.order) / 2;
           }
           
-          console.log('Inserting at position:', { targetStatus, overTaskIndex, newOrder });
           updateTask(taskId, { status: targetStatus, order: newOrder });
         }
-      } else {
-        console.log('Task not found:', { activeId: active.id, overId: over.id });
-      }
-    }
-  };
-
-  const calculateNewOrder = (tasks: Task[], activeIndex: number, overIndex: number, status: TaskStatus): number => {
-    const sameStatusTasks = tasks.filter(t => t.status === status).sort((a, b) => a.order - b.order);
-    
-    // 同じステータス内でのインデックスを取得
-    const activeTask = tasks[activeIndex];
-    const overTask = tasks[overIndex];
-    
-    const activeStatusIndex = sameStatusTasks.findIndex(t => t.id === activeTask.id);
-    const overStatusIndex = sameStatusTasks.findIndex(t => t.id === overTask.id);
-    
-    console.log('Same status indexes:', { activeStatusIndex, overStatusIndex, sameStatusTasksLength: sameStatusTasks.length });
-    
-    if (activeStatusIndex < overStatusIndex) {
-      // 下に移動する場合
-      const overTaskInStatus = sameStatusTasks[overStatusIndex];
-      const nextTask = sameStatusTasks[overStatusIndex + 1];
-      
-      if (nextTask) {
-        return (overTaskInStatus.order + nextTask.order) / 2;
-      } else {
-        return overTaskInStatus.order + 1;
-      }
-    } else {
-      // 上に移動する場合
-      const overTaskInStatus = sameStatusTasks[overStatusIndex];
-      const prevTask = sameStatusTasks[overStatusIndex - 1];
-      
-      if (prevTask) {
-        return (prevTask.order + overTaskInStatus.order) / 2;
-      } else {
-        return overTaskInStatus.order - 1;
       }
     }
   };
 
   const getStatusFromContainerId = (containerId: string): TaskStatus | null => {
-    // コンテナIDからステータスを判定するロジック
     if (containerId.includes('column-TODO')) return 'TODO';
     if (containerId.includes('column-IN_PROGRESS')) return 'IN_PROGRESS';
     if (containerId.includes('column-PAUSE')) return 'PAUSE';
@@ -173,19 +137,14 @@ export const KanbanBoard: FC = () => {
         </div>
 
         <div className="flex-1 grid grid-cols-3 gap-6 min-h-0 overflow-hidden">
-          {/* TODO列（縦長） */}
+          {/* TODO列 */}
           <div className="col-span-1 min-h-0">
             <KanbanColumn status="TODO" workspaceId={selectedWorkspace.id} />
           </div>
 
-          {/* 進行状況の列（In Progress、Pause） */}
-          <div className="col-span-1 flex flex-col gap-6 min-h-0">
-            <div className="flex-1 min-h-0">
-              <KanbanColumn status="IN_PROGRESS" workspaceId={selectedWorkspace.id} />
-            </div>
-            <div className="flex-1 min-h-0">
-              <KanbanColumn status="PAUSE" workspaceId={selectedWorkspace.id} />
-            </div>
+          {/* In Progress列 */}
+          <div className="col-span-1 min-h-0">
+            <KanbanColumn status="IN_PROGRESS" workspaceId={selectedWorkspace.id} />
           </div>
 
           {/* Done列 */}

@@ -51,14 +51,12 @@ export const KanbanColumn: FC<KanbanColumnProps> = ({ status, workspaceId }) => 
     id: `column-${status}`,
   });
 
-  // 実際のタスクデータを取得
   const tasks = getTasksByStatus(workspaceId, status);
 
   return (
     <div
       className={`h-full flex flex-col bg-white rounded-lg shadow-sm border ${config.borderColor} overflow-hidden`}
     >
-      {/* ヘッダー */}
       <div
         className={`p-4 ${config.color} rounded-t-lg border-b ${config.borderColor} flex-shrink-0`}
       >
@@ -72,13 +70,12 @@ export const KanbanColumn: FC<KanbanColumnProps> = ({ status, workspaceId }) => 
         </div>
       </div>
 
-      {/* タスクリスト */}
-      <div ref={setNodeRef} className={'p-4 overflow-y-auto flex-1 min-h-0'}>
+      <div ref={setNodeRef} className={'p-4 overflow-y-auto flex-1 min-h-0 hidden-scrollbar'}>
         {tasks.length === 0 ? (
           <div className="text-center text-gray-500 py-8">タスクがありません</div>
         ) : (
           <SortableContext items={tasks.map(task => task.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-3">
+            <div className="space-y-3 min-h-full">
               {tasks.map((task) => (
                 <KanbanCard key={task.id} id={task.id} task={task} />
               ))}
