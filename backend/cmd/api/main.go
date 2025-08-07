@@ -10,6 +10,7 @@ import (
 	"log"
 
 	"task_estimate_app/backend/infrastructure/app"
+	_ "task_estimate_app/backend/docs"
 )
 
 func main() {
