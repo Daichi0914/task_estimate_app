@@ -29,6 +29,11 @@ go.work.sum
 # tmp files
 backend/tmp
 
+# swagger auto-generated files
+backend/docs/docs.go
+backend/docs/swagger.json
+backend/docs/swagger.yaml
+
 ### NextJS template
 # dependencies
 /node_modules

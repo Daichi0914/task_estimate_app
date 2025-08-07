@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, MouseEvent } from 'react';
 import { Task } from '@/types/task';
 import { MoreVerticalIcon } from '../ui/icons';
 import { TaskDetailModal } from './taskDetailModal';
@@ -23,12 +23,10 @@ export const KanbanCard: FC<KanbanCardProps> = ({ task, id }) => {
   } = useSortable({ id });
   const { isOver } = useDroppable({ id: `drop-${id}` });
 
-  const handleCardClick = () => {
-    setIsModalOpen(true);
-  };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
+  const handleMenuClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    e.preventDefault();
     setIsModalOpen(true);
   };
 
@@ -40,12 +38,11 @@ export const KanbanCard: FC<KanbanCardProps> = ({ task, id }) => {
           transform: CSS.Transform.toString(transform),
           transition,
         }}
-        className={`flex gap-2 justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow relative group ${
-          isDragging ? 'opacity-50 cursor-grabbing' : 'cursor-grab'
+        className={`flex gap-2 justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow relative group cursor-grab active:cursor-grabbing ${
+          isDragging ? 'opacity-50' : ''
         } ${isOver ? 'border-blue-400 bg-blue-50' : ''}`}
         {...attributes}
         {...listeners}
-        onClick={handleCardClick}
       >
         <div className="flex-1 min-w-0">
           <h4 className="font-medium text-gray-900 mb-2">{task.title}</h4>
@@ -57,8 +54,10 @@ export const KanbanCard: FC<KanbanCardProps> = ({ task, id }) => {
           </div>
         </div>
         <button
+          type="button"
           onClick={handleMenuClick}
-          className="p-1 rounded hover:bg-gray-100 transition-colors"
+          className="p-1 rounded hover:bg-gray-100 transition-colors z-10 cursor-pointer"
+          onPointerDown={(e) => e.stopPropagation()}
         >
           <MoreVerticalIcon className="w-4 h-4 text-gray-500" />
         </button>
