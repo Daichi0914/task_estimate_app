@@ -1,8 +1,8 @@
-// @title           Task Estimate API
-// @version         1.0
-// @description     This is the API documentation for Task Estimate App.
-// @host            localhost:8080
-// @BasePath        /api/v1
+// @title Task Estimate API
+// @version 1.0
+// @description This is the API documentation for Task Estimate App.
+// @host localhost:8080
+// @BasePath /api/v1
 package main
 
 import (
@@ -10,7 +10,6 @@ import (
 	"log"
 
 	"task_estimate_app/backend/infrastructure/app"
-	_ "task_estimate_app/backend/docs"
 )
 
 func main() {
