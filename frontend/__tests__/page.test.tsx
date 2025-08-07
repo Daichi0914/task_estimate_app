@@ -1,4 +1,4 @@
-import AppProvider from '@/provider/AppProvider';
+import { AppProvider } from '@/provider/AppProvider';
 import Home from '@/app/page';
 import { render, screen } from '@testing-library/react';
 
@@ -10,7 +10,7 @@ describe('Home', () => {
       </AppProvider>
     );
 
-    const heading = screen.getByRole('heading', { level: 1 });
+    const heading = screen.getByRole('heading', { level: 2 });
     expect(heading).toBeInTheDocument();
   });
 });

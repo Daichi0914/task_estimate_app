@@ -19,6 +19,16 @@ services:
     env_file:
       - .env.test
 
+  frontend_prod:
+    build: ./frontend
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env.prod
+
   backend_dev:
     build: ./backend
     ports:
@@ -29,19 +39,31 @@ services:
     env_file:
       - .env.dev
     working_dir: /app
-    command: ["/bin/sh", "-c", "/go/bin/swag init -g cmd/api/main.go && air"]
+    command: ["/bin/sh", "-c", "/go/bin/swag init -g cmd/api/main.go && air -c .air.dev.toml"]
 
   backend_test:
     build: ./backend
     ports:
-      - "8081:8081"
+      - "8081:8080"
     volumes:
       - ./backend:/app
       - /app/tmp
     env_file:
       - .env.test
     working_dir: /app
-    command: ["air"]
+    command: ["air", "-c", ".air.test.toml"]
+
+  backend_prod:
+    build: ./backend
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./backend:/app
+      - /app/tmp
+    env_file:
+      - .env.prod
+    working_dir: /app
+    command: ["air", "-c", ".air.prod.toml"]
 
   db_dev:
     image: mysql:8
@@ -69,8 +91,22 @@ services:
       - ./my.cnf:/etc/mysql/my.cnf
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  db_prod:
+    image: mysql:8
+    restart: always
+    env_file:
+      - .env.prod
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+      - ./backend/infrastructure/db/migration:/docker-entrypoint-initdb.d
+      - ./my.cnf:/etc/mysql/my.cnf
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
 volumes:
   mysql_data:
   mysql_test_data:
+  mysql_prod_data:
   frontend_node_modules:
   backend_tmp:
